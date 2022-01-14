@@ -49,7 +49,7 @@ public class UserRepository extends BaseRepository {
         }
     }
 
-    public String findUserEmail(String userEmail) {
+    public String findUserEmailByEmail(String userEmail) {
         String email = null;
         try {
             String sqlQuery = "SELECT " +
@@ -62,16 +62,37 @@ public class UserRepository extends BaseRepository {
             while (resultSet.next()) {
                 email = resultSet.getString("user_email");
             }
-            connection.commit();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error!");
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - findUserEmailByEmail!");
         }
         return email;
     }
 
-    public String findUserPassword(String username) {
+    public String findUserEmailByUsername(String userName) {
+        String email = null;
+        try {
+            String sqlQuery = "SELECT " +
+                    "user_email " +
+                    "FROM tblusers " +
+                    "WHERE user_name = ? ";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1, userName);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                email = resultSet.getString("user_email");
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - findUserEmailByUsername!");
+        }
+        return email;
+    }
+
+
+    public String findUserPasswordByUsername(String username) {
         String passwordHash = null;
         try {
             String sqlQuery = "SELECT " +
@@ -84,16 +105,15 @@ public class UserRepository extends BaseRepository {
             while (resultSet.next()) {
                 passwordHash = resultSet.getString("user_password");
             }
-            connection.commit();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error!");
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - findUserPasswordByUsername!");
         }
         return passwordHash;
     }
 
-    public String findUsername(String username) {
+    public String findUsernameByUsername(String username) {
         String usernameDB = null;
         try {
             String sqlQuery = "SELECT " +
@@ -106,13 +126,51 @@ public class UserRepository extends BaseRepository {
             while (resultSet.next()) {
                 usernameDB = resultSet.getString("user_name");
             }
-            connection.commit();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error!");
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - findUsernameByUsername!");
         }
         return usernameDB;
+    }
+
+    public User findUserByUsername(String username) {
+        User user = new User();
+        try {
+            String sqlQuery = "SELECT " +
+                    "user_name, " +
+                    "user_email, " +
+                    "user_first_name, " +
+                    "user_last_name, " +
+                    "user_avatar, " +
+                    "user_phone_number, " +
+                    "role_id, " +
+                    "dob, " +
+                    "user_status, " +
+                    "user_gender " +
+                    "FROM tblusers " +
+                    "WHERE user_name = ? ";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                user.setUsername(resultSet.getString("user_name"));
+                user.setEmail(resultSet.getString("user_email"));
+                user.setFirst_name(resultSet.getString("user_first_name"));
+                user.setLast_name(resultSet.getString("user_last_name"));
+                user.setAvatar(resultSet.getString("user_avatar"));
+                user.setPhone_number(resultSet.getString("user_phone_number"));
+                user.setRole_id(resultSet.getInt("role_id"));
+                user.setDob(resultSet.getDate("dob"));
+                user.setStatus(resultSet.getString("user_status"));
+                user.setGender(resultSet.getString("user_gender"));
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - findUserByUsername!");
+        }
+        return user;
     }
 
     public Optional<UserPrinciple> findOneWithAuthoritiesByUsername(String username) {
@@ -141,16 +199,9 @@ public class UserRepository extends BaseRepository {
                 userPrinciple.setStatus(resultSet.getString("user_status"));
                 userPrinciple.setRoleId(resultSet.getInt("role_id"));
             }
-            connection.commit();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         Optional<UserPrinciple> opt = Optional.of(userPrinciple);
         return opt;
@@ -172,11 +223,36 @@ public class UserRepository extends BaseRepository {
             if (email != null && email.length() > 0) {
                 return true;
             }
-            connection.commit();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error!");
+        }
+        return false;
+    }
+
+    public boolean isUserConfirmEmail(String userEmail) {
+        String confirmed_at = null;
+        try {
+            String sqlQuery = "SELECT " +
+                    "confirmed_at " +
+                    "FROM tblconfirmtoken " +
+                    "WHERE user_email = ? ";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setString(1, userEmail);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                if (resultSet.getDate("confirmed_at") != null) {
+                    confirmed_at = resultSet.getDate("confirmed_at").toString();
+                }
+            }
+            if (confirmed_at != null && confirmed_at.length() > 0) {
+                return true;
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error! - isUserConfirmEmail");
         }
         return false;
     }

@@ -11,12 +11,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 @Service
 public class EmailService {
-
 
 
     public void send(String to, String email) {
@@ -33,6 +34,7 @@ public class EmailService {
 
             mailSender.setJavaMailProperties(properties);
             String from = "contactemailauto@gmail.com";
+
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);

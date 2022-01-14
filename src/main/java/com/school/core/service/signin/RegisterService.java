@@ -3,7 +3,6 @@ package com.school.core.service.signin;
 import com.school.core.service.email.EmailService;
 import com.school.core.entity.ConfirmToken;
 import com.school.core.entity.RegistrationRequest;
-import com.school.core.entity.Response;
 import com.school.core.entity.User;
 import com.school.core.response.AppResponse;
 import com.school.core.service.confirm.ConfirmTokenService;
@@ -16,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -34,6 +35,7 @@ public class RegisterService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public ResponseEntity<?> register(RegistrationRequest request) {
+        List<String> data = new ArrayList<>();
         boolean userExist = userService.isUserExist(request.getEmail());
         if (userExist) {
             return new ResponseEntity<>(new AppResponse().badRequest("This email: " + request.getEmail() + " is ALREADY exist!"), HttpStatus.BAD_REQUEST);
@@ -53,7 +55,8 @@ public class RegisterService {
             String link = "http://192.168.1.38:8080/confirm?token=" + token;
             try {
                 emailService.send(user.getEmail(), buildEmail(user.getFirst_name(), link));
-                return new ResponseEntity<>(new AppResponse().success(token), HttpStatus.OK);
+                data.add(token);
+                return new ResponseEntity<>(new AppResponse().successWithData("Register Successfully!", data), HttpStatus.OK);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -84,19 +87,20 @@ public class RegisterService {
     }
 
     public ResponseEntity<?> confirmToken(String token) {
+        List<String> data = new ArrayList<>();
         ConfirmToken confirmToken = confirmTokenService.findTokenByToken(token);
 
         if (confirmToken.getConfirmed_at() != null) {
             return new ResponseEntity<>(new AppResponse().badRequest("Email Already Confirmed!"), HttpStatus.BAD_REQUEST);
         }
 
-        String confirmTokenExpiresAt = confirmToken.getExpires_at();
+//        String confirmTokenExpiresAt = confirmToken.getExpires_at();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(confirmTokenExpiresAt, formatter);
-        LocalDateTime expiredAt = dateTime;
-        if (expiredAt.isBefore(LocalDateTime.now())) {
-            return new ResponseEntity<>(new AppResponse().badRequest("Token Expired!"), HttpStatus.BAD_REQUEST);
-        }
+//        LocalDateTime dateTime = LocalDateTime.parse(confirmTokenExpiresAt, formatter);
+//        LocalDateTime expiredAt = dateTime;
+//        if (expiredAt.isBefore(LocalDateTime.now())) {
+//            return new ResponseEntity<>(new AppResponse().badRequest("Token Expired!"), HttpStatus.BAD_REQUEST);
+//        }
         LocalDateTime currentDateTime = LocalDateTime.now();
         String formattedDateTime = currentDateTime.format(formatter);
         confirmTokenService.updateConfirmedAt(token, formattedDateTime);
@@ -271,7 +275,7 @@ public class RegisterService {
                 "                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n" +
                 "                      <tr>\n" +
                 "                        <td align=\"center\" bgcolor=\"#1a82e2\" style=\"border-radius: 6px;\">\n" +
-                "                          <a href= " + link + " target=\"_blank\" style=\"display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;\">Active</a>\n" +
+                "                          <a target=\"_blank\" href= " + link + "  style=\"display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;\">Active</a>\n" +
                 "                        </td>\n" +
                 "                      </tr>\n" +
                 "                    </table>\n" +

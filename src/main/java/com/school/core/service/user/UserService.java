@@ -5,18 +5,11 @@ import com.school.core.entity.UserPrinciple;
 import com.school.core.repository.UserRepository;
 import com.school.core.response.AppResponse;
 import com.school.core.response.BaseException;
-import com.school.core.service.confirm.ConfirmTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +21,7 @@ public class UserService {
     private UserRepository userRepository;
 
     public ResponseEntity<?> save(User user) {
+        List<String> data = new ArrayList<>();
         try {
             userRepository.saveUser(user);
             return new ResponseEntity<>(new AppResponse().success("Register Successfully!"), HttpStatus.OK);
@@ -42,27 +36,58 @@ public class UserService {
         return userRepository.findOneWithAuthoritiesByUsername(username);
     }
 
-    public String findUsername(String username) {
+    public String findUsernameByUsername(String username) {
         try {
-            return userRepository.findUsername(username);
+            return userRepository.findUsernameByUsername(username);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
         }
     }
 
-    public String findUserPassword(String username) {
+    public ResponseEntity<?> findUserByUsername(String username) {
         try {
-            return userRepository.findUserPassword(username);
+            List<User> data = new ArrayList<>();
+            User user = userRepository.findUserByUsername(username);
+            if (user != null) {
+                if (user.getUsername() != null
+                        && user.getFirst_name() != null
+                        && user.getLast_name() != null
+                        && user.getAvatar() != null
+                ) {
+                    data.add(user);
+                    return new ResponseEntity<>(new AppResponse().successWithData("Find User By Username Successfully!", data), HttpStatus.OK);
+                }
+
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Can't find user with this username: " + username), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
         }
     }
 
-    public String findUserEmail(String userEmail) {
+    public String findUserPasswordByUsername(String username) {
         try {
-            return userRepository.findUserEmail(userEmail);
+            return userRepository.findUserPasswordByUsername(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
+        }
+    }
+
+    public String findUserEmailByEmail(String userEmail) {
+        try {
+            return userRepository.findUserEmailByEmail(userEmail);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
+        }
+    }
+
+    public String findUserEmailByUsername(String userName) {
+        try {
+            return userRepository.findUserEmailByUsername(userName);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
@@ -81,6 +106,15 @@ public class UserService {
     public boolean isUserExist(String userEmail) {
         try {
             return userRepository.isUserExist(userEmail);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
+        }
+    }
+
+    public boolean isUserConfirmEmail(String userEmail) {
+        try {
+            return userRepository.isUserConfirmEmail(userEmail);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");

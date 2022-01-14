@@ -54,9 +54,8 @@ public class TokenProvider {
         }
         key = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
-        this.tokenValidityInMilliseconds = 1000 * 1800L;
-        this.tokenValidityInMillisecondsForRememberMe =
-                1000 * 2592000L;
+        this.tokenValidityInMilliseconds = 86400000;
+        this.tokenValidityInMillisecondsForRememberMe = 172800000;
     }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
@@ -92,11 +91,14 @@ public class TokenProvider {
 
     public boolean validateToken(String authToken) {
         try {
+
             jwtParser.parseClaimsJws(authToken);
+
             return true;
+
         } catch (JwtException | IllegalArgumentException e) {
-            log.info("Invalid JWT token.");
-            log.trace("Invalid JWT token trace.", e);
+            log.info("Invalid JWT token!");
+            log.trace("Invalid JWT token trace!", e);
         }
         return false;
     }

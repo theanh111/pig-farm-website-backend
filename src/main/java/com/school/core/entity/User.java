@@ -19,4 +19,7 @@ public class User {
     private String phone_number;
     private String gender;
     private Date dob;
+    private String avatar;
+    private Integer role_id;
+    private String status;
 }

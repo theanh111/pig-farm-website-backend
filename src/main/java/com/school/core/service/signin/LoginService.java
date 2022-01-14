@@ -13,6 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 public class LoginService {
@@ -29,19 +32,31 @@ public class LoginService {
     private TokenProvider tokenProvider;
 
     public ResponseEntity<?> login(LoginRequest loginRequest) {
-        String checkUserName = userService.findUsername(loginRequest.getUsername());
+        List<String> data = new ArrayList<>();
+        String checkUserName = userService.findUsernameByUsername(loginRequest.getUsername());
         if (checkUserName == null) {
             return new ResponseEntity<>(new AppResponse().badRequest("This username: " + loginRequest.getUsername() + " is NOT exist!"), HttpStatus.BAD_REQUEST);
         } else {
-            String passwordByUsername = userService.findUserPassword(loginRequest.getUsername());
+            String passwordByUsername = userService.findUserPasswordByUsername(loginRequest.getUsername());
             if (passwordByUsername == null) {
                 return new ResponseEntity<>(new AppResponse().badRequest("This username: " + loginRequest.getUsername() + " is NOT exist!"), HttpStatus.BAD_REQUEST);
             } else {
                 boolean checkIfPasswordMatches = bCryptPasswordEncoder.matches(loginRequest.getPassword(), passwordByUsername);
                 if (checkIfPasswordMatches) {
-                    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-                    String token = tokenProvider.createToken(authentication, true);
-                    return new ResponseEntity<>(new AppResponse().success("Welcome " + loginRequest.getUsername() + "! Token: [" + token + "]"), HttpStatus.OK);
+                    String emailUser = userService.findUserEmailByUsername(loginRequest.getUsername());
+                    if (emailUser != null && emailUser.length() > 0) {
+                        boolean isUserConfirmEmail = userService.isUserConfirmEmail(emailUser);
+                        if (isUserConfirmEmail) {
+                            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                            String token = tokenProvider.createToken(authentication, true);
+                            data.add(token);
+                            return new ResponseEntity<>(new AppResponse().successWithData("Login Successfully!", data), HttpStatus.OK);
+                        } else {
+                            return new ResponseEntity<>(new AppResponse().badRequest("User is not confirm email! Please check email!"), HttpStatus.BAD_REQUEST);
+                        }
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Can't find email with this username!"), HttpStatus.BAD_REQUEST);
+                    }
                 } else {
                     return new ResponseEntity<>(new AppResponse().badRequest("Wrong password!"), HttpStatus.BAD_REQUEST);
                 }

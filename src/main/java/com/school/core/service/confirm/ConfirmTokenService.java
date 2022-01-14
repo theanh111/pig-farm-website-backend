@@ -5,8 +5,6 @@ import com.school.core.repository.ConfirmTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-
 @Service
 public class ConfirmTokenService {
     @Autowired
