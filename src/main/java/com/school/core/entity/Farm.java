@@ -13,4 +13,8 @@ public class Farm {
     private String ten_trang_trai;
     private String hinh_anh;
     private String ngay_nhap;
+    private String nguoi_nhap;
+    private String nguoi_cap_nhat;
+    private String ngay_cap_nhat;
+    private String tu_khoa;
 }

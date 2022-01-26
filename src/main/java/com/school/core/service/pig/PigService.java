@@ -63,6 +63,27 @@ public class PigService {
         }
     }
 
+    public ResponseEntity<?> getAllPigByFilter(Pig pigFilter) {
+        try {
+            List<Pig> listPigByFilter = pigRepository.getAllPigByFilter(pigFilter);
+            if (listPigByFilter.size() > 0) {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(200);
+                responseData.setMessage("Get Pig By Filter");
+                responseData.setData(listPigByFilter);
+                return new ResponseEntity<>(responseData, HttpStatus.OK);
+            } else {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(400);
+                responseData.setMessage("Can't Get Pig By Filter");
+                return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
+        }
+    }
+
     public ResponseEntity<?> getPigLimit12() {
         try {
             List<PigLandingPage> listPigLandingPage = pigRepository.getPigLimit12();
@@ -187,6 +208,16 @@ public class PigService {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new AppResponse().badRequest("Error update pig status!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<?> deletePig(Pig pig) {
+        try {
+            pigRepository.deletePig(pig);
+            return new ResponseEntity<>(new AppResponse().success("Xóa pig thành công!"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Error delete pig!"), HttpStatus.BAD_REQUEST);
         }
     }
 }

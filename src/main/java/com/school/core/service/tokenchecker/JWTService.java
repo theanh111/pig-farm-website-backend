@@ -31,7 +31,7 @@ public class JWTService {
     public boolean checkToken(String token) {
         boolean checkToken = tokenProvider.validateToken(token);
         if (checkToken) {
-            log.info("JWT token passed!");
+//            log.info("JWT token passed! [" + token + "]");
             return true;
         } else {
             return false;

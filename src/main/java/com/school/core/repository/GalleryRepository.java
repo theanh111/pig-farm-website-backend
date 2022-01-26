@@ -1,9 +1,9 @@
 package com.school.core.repository;
 
-import com.school.core.entity.Blog;
-import com.school.core.entity.Farm;
 import com.school.core.entity.Gallery;
 import com.school.core.response.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +17,8 @@ import java.util.List;
 
 @Repository
 public class GalleryRepository extends BaseRepository {
+    private final Logger log = LoggerFactory.getLogger(GalleryRepository.class);
+
     public List<Gallery> getAllGallery() {
         List<Gallery> listGallery = new ArrayList<>();
         try {
@@ -27,6 +29,8 @@ public class GalleryRepository extends BaseRepository {
                     "hinh_anh,  " +
                     "nguoi_nhap, " +
                     "ngay_nhap, " +
+                    "nguoi_cap_nhat, " +
+                    "ngay_cap_nhat, " +
                     "trang_thai " +
                     "FROM tblgallery " +
                     "ORDER BY ngay_nhap DESC ";
@@ -40,6 +44,8 @@ public class GalleryRepository extends BaseRepository {
                 gallery.setHinh_anh(resultSet.getString("hinh_anh"));
                 gallery.setNguoi_nhap(resultSet.getString("nguoi_nhap"));
                 gallery.setNgay_nhap(resultSet.getString("ngay_nhap"));
+                gallery.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
+                gallery.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 gallery.setTrang_thai(resultSet.getInt("trang_thai"));
                 listGallery.add(gallery);
             }
@@ -52,22 +58,24 @@ public class GalleryRepository extends BaseRepository {
         return listGallery;
     }
 
-
     public void saveGallery(Gallery gallery) {
         try {
             Date dateCurrent = new Date();
             String sqlQuery = "INSERT INTO tblgallery " +
-                    "(ten_anh, the_loai, hinh_anh, nguoi_nhap, ngay_nhap) " +
-                    "VALUES (?, ?, ?, ?, ?) ";
+                    "(ten_anh, the_loai, hinh_anh, nguoi_nhap, ngay_nhap, nguoi_cap_nhat, ngay_cap_nhat) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?) ";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, gallery.getTen_anh());
             statement.setString(2, gallery.getThe_loai());
             statement.setString(3, gallery.getHinh_anh());
             statement.setString(4, gallery.getNguoi_nhap());
             statement.setTimestamp(5, new Timestamp(dateCurrent.getTime()));
+            statement.setString(6, gallery.getNguoi_cap_nhat());
+            statement.setTimestamp(7, new Timestamp(dateCurrent.getTime()));
             statement.execute();
             connection.commit();
             statement.close();
+            log.info("SAVE GALLERY: " + gallery.getTen_anh());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - saveGallery!");
@@ -76,23 +84,45 @@ public class GalleryRepository extends BaseRepository {
 
     public void updateGallery(Gallery gallery) {
         try {
+            Date dateCurrent = new Date();
             String sqlQuery = "UPDATE tblgallery " +
                     "SET " +
                     "ten_anh = ?, " +
                     "hinh_anh = ?, " +
-                    "the_loai = ? " +
+                    "the_loai = ?, " +
+                    "nguoi_cap_nhat = ?, " +
+                    "ngay_cap_nhat = ? " +
                     "WHERE id = ? ";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, gallery.getTen_anh());
             statement.setString(2, gallery.getHinh_anh());
             statement.setString(3, gallery.getThe_loai());
-            statement.setInt(4, gallery.getId());
+            statement.setString(4, gallery.getNguoi_cap_nhat());
+            statement.setTimestamp(5, new Timestamp(dateCurrent.getTime()));
+            statement.setInt(6, gallery.getId());
             statement.executeUpdate();
             connection.commit();
             statement.close();
+            log.info("UPDATE GALLERY: " + gallery.getTen_anh());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - updateGallery!");
+        }
+    }
+
+    public void deleteGallery(Gallery gallery) {
+        try {
+            String sqlQuery = "DELETE FROM tblgallery WHERE " +
+                    "id = ? " ;
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, gallery.getId());
+            statement.executeUpdate();
+            connection.commit();
+            statement.close();
+            log.info("DELETE GALLERY: " + gallery.getTen_anh());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - deleteGallery!");
         }
     }
 }

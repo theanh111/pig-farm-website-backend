@@ -1,6 +1,7 @@
 package com.school.core.restcontroller;
 
 import com.school.core.entity.Blog;
+import com.school.core.entity.Farm;
 import com.school.core.response.AppResponse;
 import com.school.core.service.blog.BlogService;
 import com.school.core.service.tokenchecker.JWTService;
@@ -41,6 +42,27 @@ public class BlogController {
         }
     }
 
+    @PostMapping("/get-blog-by-filter")
+    public ResponseEntity<?> getBlogByFilter(@RequestBody Blog blogFilter) {
+        try {
+            return blogService.getAllBlogByFilter(blogFilter);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/count-blog")
+    public ResponseEntity<?> countBlog() {
+        try {
+            return blogService.countBlog();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @PostMapping("/save-blog")
     public ResponseEntity<?> saveFarm(@RequestHeader HttpHeaders httpHeaders, @RequestBody Blog blog) {
         try {
@@ -48,7 +70,6 @@ public class BlogController {
             if (tokenList != null && tokenList.size() > 0) {
                 String token = tokenList.get(0);
                 if (token != null && !token.equals("") && token.length() > 0) {
-                    System.out.println("- Token Header: " + token);
                     boolean isTokenValid = jwtService.checkToken(token);
                     if (isTokenValid) {
                         return blogService.saveBlog(blog);
@@ -63,6 +84,51 @@ public class BlogController {
             return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/update-blog")
+    public ResponseEntity<?> updateBlog(@RequestHeader HttpHeaders httpHeaders, @RequestBody Blog blog) {
+        try {
+            List<String> tokenList = httpHeaders.get("access_token");
+            if (tokenList != null && tokenList.size() > 0) {
+                String token = tokenList.get(0);
+                if (token != null && !token.equals("") && token.length() > 0) {
+                    boolean isTokenValid = jwtService.checkToken(token);
+                    if (isTokenValid) {
+                        return blogService.updateBlog(blog);
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
+                    }
+                }
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Please check Header Token!"), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/delete-blog")
+    public ResponseEntity<?> deleteBlog(@RequestHeader HttpHeaders httpHeaders, @RequestBody Blog blog) {
+        try {
+            List<String> tokenList = httpHeaders.get("access_token");
+            if (tokenList != null && tokenList.size() > 0) {
+                String token = tokenList.get(0);
+                if (token != null && !token.equals("") && token.length() > 0) {
+                    boolean isTokenValid = jwtService.checkToken(token);
+                    if (isTokenValid) {
+                        return blogService.deleteBlog(blog);
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
+                    }
+                }
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Please check Header Token!"), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
 }

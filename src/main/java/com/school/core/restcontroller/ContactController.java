@@ -41,10 +41,55 @@ public class ContactController {
             if (tokenList != null && tokenList.size() > 0) {
                 String token = tokenList.get(0);
                 if (token != null && !token.equals("") && token.length() > 0) {
-                    System.out.println("- Token Header: " + token);
                     boolean isTokenValid = jwtService.checkToken(token);
                     if (isTokenValid) {
                         return contactService.saveContact(contact);
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
+                    }
+                }
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Please check Header Token!"), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping("/update-contact")
+    public ResponseEntity<?> updateContact(@RequestHeader HttpHeaders httpHeaders, @RequestBody Contact contact) {
+        try {
+            List<String> tokenList = httpHeaders.get("access_token");
+            if (tokenList != null && tokenList.size() > 0) {
+                String token = tokenList.get(0);
+                if (token != null && !token.equals("") && token.length() > 0) {
+                    boolean isTokenValid = jwtService.checkToken(token);
+                    if (isTokenValid) {
+                        return contactService.updateContact(contact);
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
+                    }
+                }
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Please check Header Token!"), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping("/delete-contact")
+    public ResponseEntity<?> deleteContact(@RequestHeader HttpHeaders httpHeaders, @RequestBody Contact contact) {
+        try {
+            List<String> tokenList = httpHeaders.get("access_token");
+            if (tokenList != null && tokenList.size() > 0) {
+                String token = tokenList.get(0);
+                if (token != null && !token.equals("") && token.length() > 0) {
+                    boolean isTokenValid = jwtService.checkToken(token);
+                    if (isTokenValid) {
+                        return contactService.deleteContact(contact);
                     } else {
                         return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
                     }

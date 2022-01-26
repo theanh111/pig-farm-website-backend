@@ -1,8 +1,6 @@
 package com.school.core.restcontroller;
 
-import com.school.core.entity.Farm;
-import com.school.core.entity.Pig;
-import com.school.core.entity.Token;
+import com.school.core.entity.*;
 import com.school.core.response.AppResponse;
 import com.school.core.service.farm.FarmService;
 import com.school.core.service.tokenchecker.JWTService;
@@ -53,6 +51,16 @@ public class FarmController {
         }
     }
 
+    @PostMapping("/get-farm-by-filter")
+    public ResponseEntity<?> getFarmByFilter(@RequestBody Farm farmFilter) {
+        try {
+            return farmService.getAllFarmByFilter(farmFilter);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/count-farm")
     public ResponseEntity<?> countFarm() {
         try {
@@ -70,7 +78,6 @@ public class FarmController {
             if (tokenList != null && tokenList.size() > 0) {
                 String token = tokenList.get(0);
                 if (token != null && !token.equals("") && token.length() > 0) {
-                    System.out.println("- Token Header: " + token);
                     boolean isTokenValid = jwtService.checkToken(token);
                     if (isTokenValid) {
                         return farmService.saveFarm(farm);
@@ -93,7 +100,6 @@ public class FarmController {
             if (tokenList != null && tokenList.size() > 0) {
                 String token = tokenList.get(0);
                 if (token != null && !token.equals("") && token.length() > 0) {
-                    System.out.println("- Token Header: " + token);
                     boolean isTokenValid = jwtService.checkToken(token);
                     if (isTokenValid) {
                         return farmService.updateFarm(farm);
@@ -108,4 +114,30 @@ public class FarmController {
             return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/delete-farm")
+    public ResponseEntity<?> deleteFarm(@RequestHeader HttpHeaders httpHeaders, @RequestBody Farm farm) {
+        try {
+            List<String> tokenList = httpHeaders.get("access_token");
+            if (tokenList != null && tokenList.size() > 0) {
+                String token = tokenList.get(0);
+                if (token != null && !token.equals("") && token.length() > 0) {
+                    boolean isTokenValid = jwtService.checkToken(token);
+                    if (isTokenValid) {
+                        return farmService.deleteFarm(farm);
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
+                    }
+                }
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Please check Header Token!"), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+
 }

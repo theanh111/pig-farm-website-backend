@@ -60,4 +60,14 @@ public class GalleryService {
             return new ResponseEntity<>(new AppResponse().badRequest("Error update gallery!"), HttpStatus.BAD_REQUEST);
         }
     }
+
+    public ResponseEntity<?> deleteGallery(Gallery gallery) {
+        try {
+            galleryRepository.deleteGallery(gallery);
+            return new ResponseEntity<>(new AppResponse().success("Xóa gallery thành công!"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Error delete gallery!"), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

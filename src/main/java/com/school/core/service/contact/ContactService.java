@@ -48,7 +48,27 @@ public class ContactService {
             return new ResponseEntity<>(new AppResponse().success("Lưu thông tin liên hệ thành công!"), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(new AppResponse().badRequest("Error save contact!"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new AppResponse().badRequest("Error update contact!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<?> updateContact(Contact contact) {
+        try {
+            contactRepository.updateContact(contact);
+            return new ResponseEntity<>(new AppResponse().success("Cập nhật contact thành công!"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Error delete contact!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<?> deleteContact(Contact contact) {
+        try {
+            contactRepository.deleteContact(contact);
+            return new ResponseEntity<>(new AppResponse().success("Xóa contact thành công!"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Error delete contact!"), HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -1,9 +1,6 @@
 package com.school.core.service.farm;
 
-import com.school.core.entity.Farm;
-import com.school.core.entity.Pig;
-import com.school.core.entity.PigLandingPage;
-import com.school.core.entity.ResponseData;
+import com.school.core.entity.*;
 import com.school.core.repository.FarmRepository;
 import com.school.core.response.AppResponse;
 import com.school.core.response.BaseException;
@@ -89,6 +86,27 @@ public class FarmService {
         }
     }
 
+    public ResponseEntity<?> getAllFarmByFilter(Farm farmFilter) {
+        try {
+            List<Farm> listFarmByFilter = farmRepository.getAllFarmByFilter(farmFilter);
+            if (listFarmByFilter.size() > 0) {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(200);
+                responseData.setMessage("Get Farm By Filter");
+                responseData.setData(listFarmByFilter);
+                return new ResponseEntity<>(responseData, HttpStatus.OK);
+            } else {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(400);
+                responseData.setMessage("Can't Get Farm By Filter");
+                return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
+        }
+    }
+
     public ResponseEntity<?> countFarm() {
         try {
             Integer totalFarm = farmRepository.countFarm();
@@ -137,6 +155,16 @@ public class FarmService {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new AppResponse().badRequest("Error update farm!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<?> deleteFarm(Farm farm) {
+        try {
+            farmRepository.deleteFarm(farm);
+            return new ResponseEntity<>(new AppResponse().success("Xóa farm thành công!"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Error delete farm!"), HttpStatus.BAD_REQUEST);
         }
     }
 }

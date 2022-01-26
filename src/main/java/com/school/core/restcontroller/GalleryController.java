@@ -1,5 +1,6 @@
 package com.school.core.restcontroller;
 
+import com.school.core.entity.Farm;
 import com.school.core.entity.Gallery;
 import com.school.core.response.AppResponse;
 import com.school.core.service.gallery.GalleryService;
@@ -39,7 +40,6 @@ public class GalleryController {
             if (tokenList != null && tokenList.size() > 0) {
                 String token = tokenList.get(0);
                 if (token != null && !token.equals("") && token.length() > 0) {
-                    System.out.println("- Token Header: " + token);
                     boolean isTokenValid = jwtService.checkToken(token);
                     if (isTokenValid) {
                         return galleryService.saveGallery(gallery);
@@ -62,7 +62,6 @@ public class GalleryController {
             if (tokenList != null && tokenList.size() > 0) {
                 String token = tokenList.get(0);
                 if (token != null && !token.equals("") && token.length() > 0) {
-                    System.out.println("- Token Header: " + token);
                     boolean isTokenValid = jwtService.checkToken(token);
                     if (isTokenValid) {
                         return galleryService.updateGallery(gallery);
@@ -77,4 +76,28 @@ public class GalleryController {
             return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/delete-gallery")
+    public ResponseEntity<?> deleteGallery(@RequestHeader HttpHeaders httpHeaders, @RequestBody Gallery gallery) {
+        try {
+            List<String> tokenList = httpHeaders.get("access_token");
+            if (tokenList != null && tokenList.size() > 0) {
+                String token = tokenList.get(0);
+                if (token != null && !token.equals("") && token.length() > 0) {
+                    boolean isTokenValid = jwtService.checkToken(token);
+                    if (isTokenValid) {
+                        return galleryService.deleteGallery(gallery);
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
+                    }
+                }
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Please check Header Token!"), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 }

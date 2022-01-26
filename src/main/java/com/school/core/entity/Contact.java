@@ -16,4 +16,7 @@ public class Contact {
     private String nguoi_nhap;
     private String ngay_nhap;
     private Integer trang_thai;
+    private String nguoi_cap_nhat;
+    private String ngay_cap_nhat;
+    private String tu_khoa;
 }

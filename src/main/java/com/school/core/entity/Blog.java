@@ -14,5 +14,10 @@ public class Blog {
     private String noi_dung;
     private String nguoi_nhap;
     private String hinh_anh;
+    private String hinh_anh_1;
+    private String hinh_anh_2;
     private String ngay_nhap;
+    private String nguoi_cap_nhat;
+    private String ngay_cap_nhat;
+    private String tu_khoa;
 }
