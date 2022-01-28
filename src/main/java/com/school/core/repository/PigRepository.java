@@ -2,6 +2,7 @@ package com.school.core.repository;
 
 import com.school.core.entity.Pig;
 import com.school.core.entity.PigLandingPage;
+import com.school.core.entity.PigSpecial;
 import com.school.core.response.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +52,38 @@ public class PigRepository extends BaseRepository {
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - getPigLimit12!");
         }
         return listPigLimit12;
+    }
+
+    public List<PigSpecial> getPigSpecial() {
+        List<PigSpecial> listPigSpecial = new ArrayList<>();
+        try {
+            String sqlQuery = "SELECT " +
+                    "id, " +
+                    "ma_so_ca_the, " +
+                    "hinh_anh_1, " +
+                    "ca_the_tieu_bieu, " +
+                    "vi_tri_tieu_bieu " +
+                    "FROM tblpig " +
+                    "WHERE trang_thai = 1 " +
+                    "AND ca_the_tieu_bieu = 1 " ;
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                PigSpecial pigSpecial = new PigSpecial();
+                pigSpecial.setId(resultSet.getInt("id"));
+                pigSpecial.setMa_so_ca_the(resultSet.getString("ma_so_ca_the"));
+                pigSpecial.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
+                pigSpecial.setCa_the_tieu_bieu(resultSet.getInt("ca_the_tieu_bieu"));
+                pigSpecial.setVi_tri_tieu_bieu(resultSet.getInt("vi_tri_tieu_bieu"));
+                listPigSpecial.add(pigSpecial);
+            }
+            connection.commit();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - getPigSpecial!");
+        }
+        return listPigSpecial;
     }
 
     public Integer countPig() {
@@ -153,21 +188,21 @@ public class PigRepository extends BaseRepository {
                 pig.setKieu_long(resultSet.getString("kieu_long"));
                 pig.setLoai_mau_long(resultSet.getString("loai_mau_long"));
                 pig.setHinh_dang_dau(resultSet.getString("hinh_dang_dau"));
-                pig.setTrong_luong_co_the_kg(resultSet.getDouble("trong_luong_co_the_kg"));
-                pig.setChieu_dai_dau_cm(resultSet.getDouble("chieu_dai_dau_cm"));
-                pig.setChieu_dai_duoi_cm(resultSet.getDouble("chieu_dai_duoi_cm"));
-                pig.setChieu_rong_nguc_cm(resultSet.getDouble("chieu_rong_nguc_cm"));
-                pig.setChieu_cao_than_tai_chan_truoc_cm(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm"));
-                pig.setChieu_dai_co_the_cm(resultSet.getDouble("chieu_dai_co_the_cm"));
-                pig.setChieu_dai_tai_cm(resultSet.getDouble("chieu_dai_tai_cm"));
-                pig.setChieu_rong_than_tai_xuong_chau_cm(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm"));
-                pig.setChu_vi_co_chan_cm(resultSet.getDouble("chu_vi_co_chan_cm"));
-                pig.setDo_rong_dai_trang_vat_vai_cm(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm"));
-                pig.setSo_bau_vu(resultSet.getInt("so_bau_vu"));
+                pig.setTrong_luong_co_the_kg(String.valueOf(resultSet.getDouble("trong_luong_co_the_kg")));
+                pig.setChieu_dai_dau_cm(String.valueOf(resultSet.getDouble("chieu_dai_dau_cm")));
+                pig.setChieu_dai_duoi_cm(String.valueOf(resultSet.getDouble("chieu_dai_duoi_cm")));
+                pig.setChieu_rong_nguc_cm(String.valueOf(resultSet.getDouble("chieu_rong_nguc_cm")));
+                pig.setChieu_cao_than_tai_chan_truoc_cm(String.valueOf(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm")));
+                pig.setChieu_dai_co_the_cm(String.valueOf(resultSet.getDouble("chieu_dai_co_the_cm")));
+                pig.setChieu_dai_tai_cm(String.valueOf(resultSet.getDouble("chieu_dai_tai_cm")));
+                pig.setChieu_rong_than_tai_xuong_chau_cm(String.valueOf(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm")));
+                pig.setChu_vi_co_chan_cm(String.valueOf(resultSet.getDouble("chu_vi_co_chan_cm")));
+                pig.setDo_rong_dai_trang_vat_vai_cm(String.valueOf(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm")));
+                pig.setSo_bau_vu(String.valueOf(resultSet.getInt("so_bau_vu")));
                 pig.setLoai_con_giong(resultSet.getString("loai_con_giong"));
-                pig.setSo_con_trong_dan(resultSet.getInt("so_con_trong_dan"));
-                pig.setSo_con_duc_trong_dan(resultSet.getInt("so_con_duc_trong_dan"));
-                pig.setSo_con_cai_trong_dan(resultSet.getInt("so_con_cai_trong_dan"));
+                pig.setSo_con_trong_dan(String.valueOf(resultSet.getInt("so_con_trong_dan")));
+                pig.setSo_con_duc_trong_dan(String.valueOf(resultSet.getInt("so_con_duc_trong_dan")));
+                pig.setSo_con_cai_trong_dan(String.valueOf(resultSet.getInt("so_con_cai_trong_dan")));
                 pig.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
                 pig.setHinh_anh_2(resultSet.getString("hinh_anh_2"));
                 pig.setHinh_dang_long(resultSet.getString("hinh_dang_long"));
@@ -273,21 +308,21 @@ public class PigRepository extends BaseRepository {
                 pig.setKieu_long(resultSet.getString("kieu_long"));
                 pig.setLoai_mau_long(resultSet.getString("loai_mau_long"));
                 pig.setHinh_dang_dau(resultSet.getString("hinh_dang_dau"));
-                pig.setTrong_luong_co_the_kg(resultSet.getDouble("trong_luong_co_the_kg"));
-                pig.setChieu_dai_dau_cm(resultSet.getDouble("chieu_dai_dau_cm"));
-                pig.setChieu_dai_duoi_cm(resultSet.getDouble("chieu_dai_duoi_cm"));
-                pig.setChieu_rong_nguc_cm(resultSet.getDouble("chieu_rong_nguc_cm"));
-                pig.setChieu_cao_than_tai_chan_truoc_cm(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm"));
-                pig.setChieu_dai_co_the_cm(resultSet.getDouble("chieu_dai_co_the_cm"));
-                pig.setChieu_dai_tai_cm(resultSet.getDouble("chieu_dai_tai_cm"));
-                pig.setChieu_rong_than_tai_xuong_chau_cm(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm"));
-                pig.setChu_vi_co_chan_cm(resultSet.getDouble("chu_vi_co_chan_cm"));
-                pig.setDo_rong_dai_trang_vat_vai_cm(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm"));
-                pig.setSo_bau_vu(resultSet.getInt("so_bau_vu"));
+                pig.setTrong_luong_co_the_kg(String.valueOf(resultSet.getDouble("trong_luong_co_the_kg")));
+                pig.setChieu_dai_dau_cm(String.valueOf(resultSet.getDouble("chieu_dai_dau_cm")));
+                pig.setChieu_dai_duoi_cm(String.valueOf(resultSet.getDouble("chieu_dai_duoi_cm")));
+                pig.setChieu_rong_nguc_cm(String.valueOf(resultSet.getDouble("chieu_rong_nguc_cm")));
+                pig.setChieu_cao_than_tai_chan_truoc_cm(String.valueOf(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm")));
+                pig.setChieu_dai_co_the_cm(String.valueOf(resultSet.getDouble("chieu_dai_co_the_cm")));
+                pig.setChieu_dai_tai_cm(String.valueOf(resultSet.getDouble("chieu_dai_tai_cm")));
+                pig.setChieu_rong_than_tai_xuong_chau_cm(String.valueOf(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm")));
+                pig.setChu_vi_co_chan_cm(String.valueOf(resultSet.getDouble("chu_vi_co_chan_cm")));
+                pig.setDo_rong_dai_trang_vat_vai_cm(String.valueOf(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm")));
+                pig.setSo_bau_vu(String.valueOf(resultSet.getInt("so_bau_vu")));
                 pig.setLoai_con_giong(resultSet.getString("loai_con_giong"));
-                pig.setSo_con_trong_dan(resultSet.getInt("so_con_trong_dan"));
-                pig.setSo_con_duc_trong_dan(resultSet.getInt("so_con_duc_trong_dan"));
-                pig.setSo_con_cai_trong_dan(resultSet.getInt("so_con_cai_trong_dan"));
+                pig.setSo_con_trong_dan(String.valueOf(resultSet.getInt("so_con_trong_dan")));
+                pig.setSo_con_duc_trong_dan(String.valueOf(resultSet.getInt("so_con_duc_trong_dan")));
+                pig.setSo_con_cai_trong_dan(String.valueOf(resultSet.getInt("so_con_cai_trong_dan")));
                 pig.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
                 pig.setHinh_anh_2(resultSet.getString("hinh_anh_2"));
                 pig.setHinh_dang_long(resultSet.getString("hinh_dang_long"));
@@ -392,21 +427,21 @@ public class PigRepository extends BaseRepository {
                 pig.setKieu_long(resultSet.getString("kieu_long"));
                 pig.setLoai_mau_long(resultSet.getString("loai_mau_long"));
                 pig.setHinh_dang_dau(resultSet.getString("hinh_dang_dau"));
-                pig.setTrong_luong_co_the_kg(resultSet.getDouble("trong_luong_co_the_kg"));
-                pig.setChieu_dai_dau_cm(resultSet.getDouble("chieu_dai_dau_cm"));
-                pig.setChieu_dai_duoi_cm(resultSet.getDouble("chieu_dai_duoi_cm"));
-                pig.setChieu_rong_nguc_cm(resultSet.getDouble("chieu_rong_nguc_cm"));
-                pig.setChieu_cao_than_tai_chan_truoc_cm(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm"));
-                pig.setChieu_dai_co_the_cm(resultSet.getDouble("chieu_dai_co_the_cm"));
-                pig.setChieu_dai_tai_cm(resultSet.getDouble("chieu_dai_tai_cm"));
-                pig.setChieu_rong_than_tai_xuong_chau_cm(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm"));
-                pig.setChu_vi_co_chan_cm(resultSet.getDouble("chu_vi_co_chan_cm"));
-                pig.setDo_rong_dai_trang_vat_vai_cm(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm"));
-                pig.setSo_bau_vu(resultSet.getInt("so_bau_vu"));
+                pig.setTrong_luong_co_the_kg(String.valueOf(resultSet.getDouble("trong_luong_co_the_kg")));
+                pig.setChieu_dai_dau_cm(String.valueOf(resultSet.getDouble("chieu_dai_dau_cm")));
+                pig.setChieu_dai_duoi_cm(String.valueOf(resultSet.getDouble("chieu_dai_duoi_cm")));
+                pig.setChieu_rong_nguc_cm(String.valueOf(resultSet.getDouble("chieu_rong_nguc_cm")));
+                pig.setChieu_cao_than_tai_chan_truoc_cm(String.valueOf(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm")));
+                pig.setChieu_dai_co_the_cm(String.valueOf(resultSet.getDouble("chieu_dai_co_the_cm")));
+                pig.setChieu_dai_tai_cm(String.valueOf(resultSet.getDouble("chieu_dai_tai_cm")));
+                pig.setChieu_rong_than_tai_xuong_chau_cm(String.valueOf(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm")));
+                pig.setChu_vi_co_chan_cm(String.valueOf(resultSet.getDouble("chu_vi_co_chan_cm")));
+                pig.setDo_rong_dai_trang_vat_vai_cm(String.valueOf(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm")));
+                pig.setSo_bau_vu(String.valueOf(resultSet.getInt("so_bau_vu")));
                 pig.setLoai_con_giong(resultSet.getString("loai_con_giong"));
-                pig.setSo_con_trong_dan(resultSet.getInt("so_con_trong_dan"));
-                pig.setSo_con_duc_trong_dan(resultSet.getInt("so_con_duc_trong_dan"));
-                pig.setSo_con_cai_trong_dan(resultSet.getInt("so_con_cai_trong_dan"));
+                pig.setSo_con_trong_dan(String.valueOf(resultSet.getInt("so_con_trong_dan")));
+                pig.setSo_con_duc_trong_dan(String.valueOf(resultSet.getInt("so_con_duc_trong_dan")));
+                pig.setSo_con_cai_trong_dan(String.valueOf(resultSet.getInt("so_con_cai_trong_dan")));
                 pig.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
                 pig.setHinh_anh_2(resultSet.getString("hinh_anh_2"));
                 pig.setHinh_dang_long(resultSet.getString("hinh_dang_long"));
@@ -526,21 +561,21 @@ public class PigRepository extends BaseRepository {
                 pig.setKieu_long(resultSet.getString("kieu_long"));
                 pig.setLoai_mau_long(resultSet.getString("loai_mau_long"));
                 pig.setHinh_dang_dau(resultSet.getString("hinh_dang_dau"));
-                pig.setTrong_luong_co_the_kg(resultSet.getDouble("trong_luong_co_the_kg"));
-                pig.setChieu_dai_dau_cm(resultSet.getDouble("chieu_dai_dau_cm"));
-                pig.setChieu_dai_duoi_cm(resultSet.getDouble("chieu_dai_duoi_cm"));
-                pig.setChieu_rong_nguc_cm(resultSet.getDouble("chieu_rong_nguc_cm"));
-                pig.setChieu_cao_than_tai_chan_truoc_cm(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm"));
-                pig.setChieu_dai_co_the_cm(resultSet.getDouble("chieu_dai_co_the_cm"));
-                pig.setChieu_dai_tai_cm(resultSet.getDouble("chieu_dai_tai_cm"));
-                pig.setChieu_rong_than_tai_xuong_chau_cm(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm"));
-                pig.setChu_vi_co_chan_cm(resultSet.getDouble("chu_vi_co_chan_cm"));
-                pig.setDo_rong_dai_trang_vat_vai_cm(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm"));
-                pig.setSo_bau_vu(resultSet.getInt("so_bau_vu"));
+                pig.setTrong_luong_co_the_kg(String.valueOf(resultSet.getDouble("trong_luong_co_the_kg")));
+                pig.setChieu_dai_dau_cm(String.valueOf(resultSet.getDouble("chieu_dai_dau_cm")));
+                pig.setChieu_dai_duoi_cm(String.valueOf(resultSet.getDouble("chieu_dai_duoi_cm")));
+                pig.setChieu_rong_nguc_cm(String.valueOf(resultSet.getDouble("chieu_rong_nguc_cm")));
+                pig.setChieu_cao_than_tai_chan_truoc_cm(String.valueOf(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm")));
+                pig.setChieu_dai_co_the_cm(String.valueOf(resultSet.getDouble("chieu_dai_co_the_cm")));
+                pig.setChieu_dai_tai_cm(String.valueOf(resultSet.getDouble("chieu_dai_tai_cm")));
+                pig.setChieu_rong_than_tai_xuong_chau_cm(String.valueOf(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm")));
+                pig.setChu_vi_co_chan_cm(String.valueOf(resultSet.getDouble("chu_vi_co_chan_cm")));
+                pig.setDo_rong_dai_trang_vat_vai_cm(String.valueOf(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm")));
+                pig.setSo_bau_vu(String.valueOf(resultSet.getInt("so_bau_vu")));
                 pig.setLoai_con_giong(resultSet.getString("loai_con_giong"));
-                pig.setSo_con_trong_dan(resultSet.getInt("so_con_trong_dan"));
-                pig.setSo_con_duc_trong_dan(resultSet.getInt("so_con_duc_trong_dan"));
-                pig.setSo_con_cai_trong_dan(resultSet.getInt("so_con_cai_trong_dan"));
+                pig.setSo_con_trong_dan(String.valueOf(resultSet.getInt("so_con_trong_dan")));
+                pig.setSo_con_duc_trong_dan(String.valueOf(resultSet.getInt("so_con_duc_trong_dan")));
+                pig.setSo_con_cai_trong_dan(String.valueOf(resultSet.getInt("so_con_cai_trong_dan")));
                 pig.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
                 pig.setHinh_anh_2(resultSet.getString("hinh_anh_2"));
                 pig.setHinh_dang_long(resultSet.getString("hinh_dang_long"));
@@ -552,225 +587,6 @@ public class PigRepository extends BaseRepository {
                 pig.setNguoi_nhap(resultSet.getString("nguoi_nhap"));
                 pig.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
                 pig.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
-                listPig.add(pig);
-            }
-            connection.commit();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - getAllPigByFilter!");
-        }
-        return listPig;
-    }
-
-    public List<Pig> getAllPigByFilterFirst(Pig pigFilter) {
-        List<Pig> listPig = new ArrayList<>();
-        try {
-            String sqlQuery = "SELECT " +
-                    "id," +
-                    "ma_so_ca_the, " +
-                    "tuoi, " +
-                    "nguoi_danh_gia, " +
-                    "dia_diem_danh_gia, " +
-                    "ngay_danh_gia, " +
-                    "gioi_tinh, " +
-                    "nhan_trung_trang, " +
-                    "tai_meo, " +
-                    "mom, " +
-                    "vanh_trang_quanh_mom, " +
-                    "mat, " +
-                    "da_co_khoang_den, " +
-                    "khoang_den_phu, " +
-                    "kieu_lung_bung, " +
-                    "chan, " +
-                    "da_mat, " +
-                    "kieu_duoi, " +
-                    "kieu_tai, " +
-                    "huong_tai, " +
-                    "kieu_long, " +
-                    "loai_mau_long, " +
-                    "hinh_dang_dau, " +
-                    "trong_luong_co_the_kg, " +
-                    "chieu_dai_dau_cm, " +
-                    "chieu_dai_duoi_cm, " +
-                    "chieu_rong_nguc_cm, " +
-                    "chieu_cao_than_tai_chan_truoc_cm, " +
-                    "chieu_dai_co_the_cm, " +
-                    "chieu_dai_tai_cm, " +
-                    "chieu_rong_than_tai_xuong_chau_cm, " +
-                    "chu_vi_co_chan_cm, " +
-                    "do_rong_dai_trang_vat_vai_cm, " +
-                    "so_bau_vu, " +
-                    "loai_con_giong, " +
-                    "so_con_trong_dan, " +
-                    "so_con_duc_trong_dan, " +
-                    "so_con_cai_trong_dan, " +
-                    "hinh_anh_1, " +
-                    "hinh_anh_2, " +
-                    "hinh_dang_long, " +
-                    "do_dai_long, " +
-                    "do_day_long, " +
-                    "pha_he, " +
-                    "ngay_nhap, " +
-                    "trang_thai, " +
-                    "nguoi_nhap " +
-                    "FROM tblpig " +
-                    "WHERE trang_thai = 1 ";
-
-            if (pigFilter.getTu_khoa() != null && pigFilter.getTu_khoa().length() > 0) {
-                sqlQuery += " AND ( " +
-                        "ma_so_ca_the LIKE ? " +
-                        "OR gioi_tinh LIKE ? " +
-                        "OR nhan_trung_trang LIKE ? " +
-                        "OR tai_meo LIKE ? " +
-                        "OR mom LIKE ? " +
-                        "OR vanh_trang_quanh_mom LIKE ? " +
-                        "OR mat LIKE ? " +
-                        "OR da_co_khoang_den LIKE ? " +
-                        "OR khoang_den_phu LIKE ? " +
-                        "OR kieu_lung_bung LIKE ? " +
-                        "OR chan LIKE ? " +
-                        "OR da_mat LIKE ? " +
-                        "OR kieu_duoi LIKE ? " +
-                        "OR kieu_tai LIKE ? " +
-                        "OR huong_tai LIKE ? " +
-                        "OR kieu_long LIKE ? " +
-                        "OR loai_mau_long LIKE ? " +
-                        "OR hinh_dang_dau LIKE ? ) ";
-            }
-            if (pigFilter.getGioi_tinh() != null && pigFilter.getGioi_tinh().length() > 0) {
-                sqlQuery += "AND gioi_tinh LIKE ? ";
-            }
-            if (pigFilter.getNhan_trung_trang() != null && pigFilter.getNhan_trung_trang().length() > 0) {
-                sqlQuery += "AND nhan_trung_trang LIKE ? ";
-            }
-            if (pigFilter.getTai_meo() != null && pigFilter.getTai_meo().length() > 0) {
-                sqlQuery += "AND tai_meo LIKE ? ";
-            }
-            if (pigFilter.getMom() != null && pigFilter.getMom().length() > 0) {
-                sqlQuery += "AND mom LIKE ? ";
-            }
-            if (pigFilter.getVanh_trang_quanh_mom() != null && pigFilter.getVanh_trang_quanh_mom().length() > 0) {
-                sqlQuery += "AND vanh_trang_quanh_mom LIKE ? ";
-            }
-            if (pigFilter.getMat() != null && pigFilter.getMat().length() > 0) {
-                sqlQuery += "AND mat LIKE ? ";
-            }
-            if (pigFilter.getDa_co_khoang_den() != null && pigFilter.getDa_co_khoang_den().length() > 0) {
-                sqlQuery += "AND da_co_khoang_den LIKE ? ";
-            }
-            if (pigFilter.getKhoang_den_phu() != null && pigFilter.getKhoang_den_phu().length() > 0) {
-                sqlQuery += "AND khoang_den_phu LIKE ? ";
-            }
-            if (pigFilter.getKieu_lung_bung() != null && pigFilter.getKieu_lung_bung().length() > 0) {
-                sqlQuery += "AND kieu_lung_bung LIKE ? ";
-            }
-            if (pigFilter.getChan() != null && pigFilter.getChan().length() > 0) {
-                sqlQuery += "AND chan LIKE ? ";
-            }
-            if (pigFilter.getDa_mat() != null && pigFilter.getDa_mat().length() > 0) {
-                sqlQuery += "AND da_mat LIKE ? ";
-            }
-            if (pigFilter.getKieu_duoi() != null && pigFilter.getKieu_duoi().length() > 0) {
-                sqlQuery += "AND kieu_duoi LIKE ? ";
-            }
-            if (pigFilter.getKieu_tai() != null && pigFilter.getKieu_tai().length() > 0) {
-                sqlQuery += "AND kieu_tai LIKE ? ";
-            }
-            if (pigFilter.getHuong_tai() != null && pigFilter.getHuong_tai().length() > 0) {
-                sqlQuery += "AND huong_tai LIKE ? ";
-            }
-            if (pigFilter.getKieu_long() != null && pigFilter.getKieu_long().length() > 0) {
-                sqlQuery += "AND kieu_long LIKE ? ";
-            }
-            if (pigFilter.getLoai_mau_long() != null && pigFilter.getLoai_mau_long().length() > 0) {
-                sqlQuery += "AND loai_mau_long LIKE ? ";
-            }
-            if (pigFilter.getHinh_dang_dau() != null && pigFilter.getHinh_dang_dau().length() > 0) {
-                sqlQuery += "AND hinh_dang_dau LIKE ? ";
-            }
-
-            sqlQuery += " ORDER BY ngay_nhap DESC";
-
-            PreparedStatement statement = connection.prepareStatement(sqlQuery);
-            statement.setString(1, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(2, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(3, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(4, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(5, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(6, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(7, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(8, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(9, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(10, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(11, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(12, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(13, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(14, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(15, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(16, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(17, "%" + pigFilter.getTu_khoa() + "%");
-            statement.setString(18, "%" + pigFilter.getTu_khoa() + "%");
-
-
-            statement.setString(19, "%" + pigFilter.getGioi_tinh() + "%");
-            statement.setString(20, "%" + pigFilter.getNhan_trung_trang() + "%");
-            statement.setString(21, "%" + pigFilter.getTai_meo() + "%");
-            statement.setString(22, "%" + pigFilter.getMom() + "%");
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Pig pig = new Pig();
-                pig.setId(resultSet.getInt("id"));
-                pig.setMa_so_ca_the(resultSet.getString("ma_so_ca_the"));
-                pig.setTuoi(resultSet.getString("tuoi"));
-                pig.setNguoi_danh_gia(resultSet.getString("nguoi_danh_gia"));
-                pig.setDia_diem_danh_gia(resultSet.getString("dia_diem_danh_gia"));
-                if (resultSet.getDate("ngay_danh_gia") != null) {
-                    pig.setNgay_danh_gia(resultSet.getDate("ngay_danh_gia").toString());
-                }
-                pig.setGioi_tinh(resultSet.getString("gioi_tinh"));
-                pig.setNhan_trung_trang(resultSet.getString("nhan_trung_trang"));
-                pig.setTai_meo(resultSet.getString("tai_meo"));
-                pig.setMom(resultSet.getString("mom"));
-                pig.setVanh_trang_quanh_mom(resultSet.getString("vanh_trang_quanh_mom"));
-                pig.setMat(resultSet.getString("mat"));
-                pig.setDa_co_khoang_den(resultSet.getString("da_co_khoang_den"));
-                pig.setKhoang_den_phu(resultSet.getString("khoang_den_phu"));
-                pig.setKieu_lung_bung(resultSet.getString("kieu_lung_bung"));
-                pig.setChan(resultSet.getString("chan"));
-                pig.setDa_mat(resultSet.getString("da_mat"));
-                pig.setKieu_duoi(resultSet.getString("kieu_duoi"));
-                pig.setKieu_tai(resultSet.getString("kieu_tai"));
-                pig.setHuong_tai(resultSet.getString("huong_tai"));
-                pig.setKieu_long(resultSet.getString("kieu_long"));
-                pig.setLoai_mau_long(resultSet.getString("loai_mau_long"));
-                pig.setHinh_dang_dau(resultSet.getString("hinh_dang_dau"));
-                pig.setTrong_luong_co_the_kg(resultSet.getDouble("trong_luong_co_the_kg"));
-                pig.setChieu_dai_dau_cm(resultSet.getDouble("chieu_dai_dau_cm"));
-                pig.setChieu_dai_duoi_cm(resultSet.getDouble("chieu_dai_duoi_cm"));
-                pig.setChieu_rong_nguc_cm(resultSet.getDouble("chieu_rong_nguc_cm"));
-                pig.setChieu_cao_than_tai_chan_truoc_cm(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm"));
-                pig.setChieu_dai_co_the_cm(resultSet.getDouble("chieu_dai_co_the_cm"));
-                pig.setChieu_dai_tai_cm(resultSet.getDouble("chieu_dai_tai_cm"));
-                pig.setChieu_rong_than_tai_xuong_chau_cm(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm"));
-                pig.setChu_vi_co_chan_cm(resultSet.getDouble("chu_vi_co_chan_cm"));
-                pig.setDo_rong_dai_trang_vat_vai_cm(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm"));
-                pig.setSo_bau_vu(resultSet.getInt("so_bau_vu"));
-                pig.setLoai_con_giong(resultSet.getString("loai_con_giong"));
-                pig.setSo_con_trong_dan(resultSet.getInt("so_con_trong_dan"));
-                pig.setSo_con_duc_trong_dan(resultSet.getInt("so_con_duc_trong_dan"));
-                pig.setSo_con_cai_trong_dan(resultSet.getInt("so_con_cai_trong_dan"));
-                pig.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
-                pig.setHinh_anh_2(resultSet.getString("hinh_anh_2"));
-                pig.setHinh_dang_long(resultSet.getString("hinh_dang_long"));
-                pig.setDo_dai_long(resultSet.getString("do_dai_long"));
-                pig.setDo_day_long(resultSet.getString("do_day_long"));
-                pig.setPha_he(resultSet.getString("pha_he"));
-                if (resultSet.getDate("ngay_nhap") != null) {
-                    pig.setNgay_nhap(resultSet.getDate("ngay_nhap").toString());
-                }
-                pig.setTrang_thai(resultSet.getInt("trang_thai"));
-                pig.setNguoi_nhap(resultSet.getString("nguoi_nhap"));
                 listPig.add(pig);
             }
             connection.commit();
@@ -985,57 +801,57 @@ public class PigRepository extends BaseRepository {
                 statement.setString(21, null);
             }
             if (pig.getTrong_luong_co_the_kg() != null) {
-                statement.setDouble(22, pig.getTrong_luong_co_the_kg());
+                statement.setDouble(22, Double.valueOf(pig.getTrong_luong_co_the_kg()));
             } else {
                 statement.setString(22, null);
             }
             if (pig.getChieu_dai_dau_cm() != null) {
-                statement.setDouble(23, pig.getChieu_dai_dau_cm());
+                statement.setDouble(23, Double.valueOf(pig.getChieu_dai_dau_cm()));
             } else {
                 statement.setString(23, null);
             }
             if (pig.getChieu_dai_duoi_cm() != null) {
-                statement.setDouble(24, pig.getChieu_dai_duoi_cm());
+                statement.setDouble(24, Double.valueOf(pig.getChieu_dai_duoi_cm()));
             } else {
                 statement.setString(24, null);
             }
             if (pig.getChieu_rong_nguc_cm() != null) {
-                statement.setDouble(25, pig.getChieu_rong_nguc_cm());
+                statement.setDouble(25, Double.valueOf(pig.getChieu_rong_nguc_cm()));
             } else {
                 statement.setString(25, null);
             }
             if (pig.getChieu_cao_than_tai_chan_truoc_cm() != null) {
-                statement.setDouble(26, pig.getChieu_cao_than_tai_chan_truoc_cm());
+                statement.setDouble(26, Double.valueOf(pig.getChieu_cao_than_tai_chan_truoc_cm()));
             } else {
                 statement.setString(26, null);
             }
             if (pig.getChieu_dai_co_the_cm() != null) {
-                statement.setDouble(27, pig.getChieu_dai_co_the_cm());
+                statement.setDouble(27, Double.valueOf(pig.getChieu_dai_co_the_cm()));
             } else {
                 statement.setString(27, null);
             }
             if (pig.getChieu_dai_tai_cm() != null) {
-                statement.setDouble(28, pig.getChieu_dai_tai_cm());
+                statement.setDouble(28, Double.valueOf(pig.getChieu_dai_tai_cm()));
             } else {
                 statement.setString(28, null);
             }
             if (pig.getChieu_rong_than_tai_xuong_chau_cm() != null) {
-                statement.setDouble(29, pig.getChieu_rong_than_tai_xuong_chau_cm());
+                statement.setDouble(29, Double.valueOf(pig.getChieu_rong_than_tai_xuong_chau_cm()));
             } else {
                 statement.setString(29, null);
             }
             if (pig.getChu_vi_co_chan_cm() != null) {
-                statement.setDouble(30, pig.getChu_vi_co_chan_cm());
+                statement.setDouble(30, Double.valueOf(pig.getChu_vi_co_chan_cm()));
             } else {
                 statement.setString(30, null);
             }
             if (pig.getDo_rong_dai_trang_vat_vai_cm() != null) {
-                statement.setDouble(31, pig.getDo_rong_dai_trang_vat_vai_cm());
+                statement.setDouble(31, Double.valueOf(pig.getDo_rong_dai_trang_vat_vai_cm()));
             } else {
                 statement.setString(31, null);
             }
             if (pig.getSo_bau_vu() != null) {
-                statement.setInt(32, pig.getSo_bau_vu());
+                statement.setInt(32, Integer.valueOf(pig.getSo_bau_vu()));
             } else {
                 statement.setString(32, null);
             }
@@ -1045,17 +861,17 @@ public class PigRepository extends BaseRepository {
                 statement.setString(33, null);
             }
             if (pig.getSo_con_trong_dan() != null) {
-                statement.setDouble(34, pig.getSo_con_trong_dan());
+                statement.setDouble(34, Double.valueOf(pig.getSo_con_trong_dan()));
             } else {
                 statement.setString(34, null);
             }
             if (pig.getSo_con_duc_trong_dan() != null) {
-                statement.setDouble(35, pig.getSo_con_duc_trong_dan());
+                statement.setDouble(35, Double.valueOf(pig.getSo_con_duc_trong_dan()));
             } else {
                 statement.setString(35, null);
             }
             if (pig.getSo_con_cai_trong_dan() != null) {
-                statement.setDouble(36, pig.getSo_con_cai_trong_dan());
+                statement.setDouble(36, Double.valueOf(pig.getSo_con_cai_trong_dan()));
             } else {
                 statement.setString(36, null);
             }
@@ -1125,9 +941,56 @@ public class PigRepository extends BaseRepository {
         }
     }
 
+    public void updatePigSpecialNull(Integer pigId) {
+        try {
+            String sqlQuery = "UPDATE tblpig " +
+                    "SET " +
+                    "ca_the_tieu_bieu = 0, " +
+                    "vi_tri_tieu_bieu = null " +
+                    "WHERE id = ? ";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, pigId);
+            statement.executeUpdate();
+            connection.commit();
+            statement.close();
+            log.info("UPDATE PIG SPECIAL TO NULL - PIG ID: " + pigId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - updatePigSpecialNull!");
+        }
+    }
+
+    public void updatePigSpecial(PigSpecial pigSpecial) {
+        try {
+            String sqlQuery = "UPDATE tblpig " +
+                    "SET " +
+                    "ca_the_tieu_bieu = 1, " +
+                    "vi_tri_tieu_bieu = ? " +
+                    "WHERE id = ? ";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            statement.setInt(1, pigSpecial.getVi_tri_cap_nhat());
+            statement.setInt(2, pigSpecial.getId_new());
+            statement.executeUpdate();
+            connection.commit();
+            statement.close();
+            log.info("UPDATE PIG SPECIAL - PIG ID: " + pigSpecial.getId_new() + " - special position updated: " + pigSpecial.getVi_tri_cap_nhat());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - updatePigSpecialNull!");
+        }
+    }
+
     public void savePig(Pig pig) {
         try {
             Date dateCurrent = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+            String dateFixed = null;
+            try {
+                dateFixed = sdf2.format(sdf.parse(pig.getNgay_danh_gia()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            };
             String sqlQuery = "INSERT INTO tblpig " +
                     "(ma_so_ca_the, tuoi, nguoi_danh_gia, dia_diem_danh_gia, ngay_danh_gia, " +
                     "gioi_tinh, nhan_trung_trang, tai_meo, mom, vanh_trang_quanh_mom, mat, da_co_khoang_den, " +
@@ -1156,8 +1019,8 @@ public class PigRepository extends BaseRepository {
             } else {
                 statement.setString(4, null);
             }
-            if (pig.getNgay_danh_gia() != null) {
-                statement.setString(5, pig.getNgay_danh_gia());
+            if (dateFixed != null) {
+                statement.setString(5, dateFixed);
             } else {
                 statement.setString(5, null);
             }
@@ -1247,57 +1110,57 @@ public class PigRepository extends BaseRepository {
                 statement.setString(22, null);
             }
             if (pig.getTrong_luong_co_the_kg() != null) {
-                statement.setDouble(23, pig.getTrong_luong_co_the_kg());
+                statement.setDouble(23, Double.valueOf(pig.getTrong_luong_co_the_kg()));
             } else {
                 statement.setString(23, null);
             }
             if (pig.getChieu_dai_dau_cm() != null) {
-                statement.setDouble(24, pig.getChieu_dai_dau_cm());
+                statement.setDouble(24, Double.valueOf(pig.getChieu_dai_dau_cm()));
             } else {
                 statement.setString(24, null);
             }
             if (pig.getChieu_dai_duoi_cm() != null) {
-                statement.setDouble(25, pig.getChieu_dai_duoi_cm());
+                statement.setDouble(25, Double.valueOf(pig.getChieu_dai_duoi_cm()));
             } else {
                 statement.setString(25, null);
             }
             if (pig.getChieu_rong_nguc_cm() != null) {
-                statement.setDouble(26, pig.getChieu_rong_nguc_cm());
+                statement.setDouble(26, Double.valueOf(pig.getChieu_rong_nguc_cm()));
             } else {
                 statement.setString(26, null);
             }
             if (pig.getChieu_cao_than_tai_chan_truoc_cm() != null) {
-                statement.setDouble(27, pig.getChieu_cao_than_tai_chan_truoc_cm());
+                statement.setDouble(27, Double.valueOf(pig.getChieu_cao_than_tai_chan_truoc_cm()));
             } else {
                 statement.setString(27, null);
             }
             if (pig.getChieu_dai_co_the_cm() != null) {
-                statement.setDouble(28, pig.getChieu_dai_co_the_cm());
+                statement.setDouble(28, Double.valueOf(pig.getChieu_dai_co_the_cm()));
             } else {
                 statement.setString(28, null);
             }
             if (pig.getChieu_dai_tai_cm() != null) {
-                statement.setDouble(29, pig.getChieu_dai_tai_cm());
+                statement.setDouble(29, Double.valueOf(pig.getChieu_dai_tai_cm()));
             } else {
                 statement.setString(29, null);
             }
             if (pig.getChieu_rong_than_tai_xuong_chau_cm() != null) {
-                statement.setDouble(30, pig.getChieu_rong_than_tai_xuong_chau_cm());
+                statement.setDouble(30, Double.valueOf(pig.getChieu_rong_than_tai_xuong_chau_cm()));
             } else {
                 statement.setString(30, null);
             }
             if (pig.getChu_vi_co_chan_cm() != null) {
-                statement.setDouble(31, pig.getChu_vi_co_chan_cm());
+                statement.setDouble(31, Double.valueOf(pig.getChu_vi_co_chan_cm()));
             } else {
                 statement.setString(31, null);
             }
             if (pig.getDo_rong_dai_trang_vat_vai_cm() != null) {
-                statement.setDouble(32, pig.getDo_rong_dai_trang_vat_vai_cm());
+                statement.setDouble(32, Double.valueOf(pig.getDo_rong_dai_trang_vat_vai_cm()));
             } else {
                 statement.setString(32, null);
             }
             if (pig.getSo_bau_vu() != null) {
-                statement.setInt(33, pig.getSo_bau_vu());
+                statement.setInt(33, Integer.valueOf(pig.getSo_bau_vu()));
             } else {
                 statement.setString(33, null);
             }
@@ -1307,17 +1170,17 @@ public class PigRepository extends BaseRepository {
                 statement.setString(34, null);
             }
             if (pig.getSo_con_trong_dan() != null) {
-                statement.setDouble(35, pig.getSo_con_trong_dan());
+                statement.setDouble(35, Integer.valueOf(pig.getSo_con_trong_dan()));
             } else {
                 statement.setString(35, null);
             }
             if (pig.getSo_con_duc_trong_dan() != null) {
-                statement.setDouble(36, pig.getSo_con_duc_trong_dan());
+                statement.setDouble(36, Integer.valueOf(pig.getSo_con_duc_trong_dan()));
             } else {
                 statement.setString(36, null);
             }
             if (pig.getSo_con_cai_trong_dan() != null) {
-                statement.setDouble(37, pig.getSo_con_cai_trong_dan());
+                statement.setDouble(37, Integer.valueOf(pig.getSo_con_cai_trong_dan()));
             } else {
                 statement.setString(37, null);
             }

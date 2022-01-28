@@ -105,6 +105,27 @@ public class PigService {
         }
     }
 
+    public ResponseEntity<?> getPigSpecial() {
+        try {
+            List<PigSpecial> listPigSpecial = pigRepository.getPigSpecial();
+            if (listPigSpecial.size() > 0) {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(200);
+                responseData.setMessage("Get Pig Special");
+                responseData.setData(listPigSpecial);
+                return new ResponseEntity<>(responseData, HttpStatus.OK);
+            } else {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(400);
+                responseData.setMessage("Can't Get Pig Special");
+                return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
+        }
+    }
+
 
     public ResponseEntity<?> getAllPig() {
         try {
@@ -208,6 +229,16 @@ public class PigService {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new AppResponse().badRequest("Error update pig status!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<?> updatePigSpecial(PigSpecial pigSpecial) {
+        try {
+            pigRepository.updatePigSpecial(pigSpecial);
+            return new ResponseEntity<>(new AppResponse().success("Cập nhật cá thể tiêu biểu thành công!"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Error update pig special!"), HttpStatus.BAD_REQUEST);
         }
     }
 

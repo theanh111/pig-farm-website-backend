@@ -82,6 +82,16 @@ public class PigController extends BaseController {
         }
     }
 
+    @GetMapping("/get-pig-special")
+    public ResponseEntity<?> getPigSpecial() {
+        try {
+            return pigService.getPigSpecial();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/save-pig")
     public ResponseEntity<?> savePig(@RequestHeader HttpHeaders httpHeaders, @RequestBody Pig pig) {
         try {
@@ -117,6 +127,28 @@ public class PigController extends BaseController {
                         return pigService.savePigImport(dataRequest);
                     } else {
                         return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.BAD_REQUEST);
+                    }
+                }
+            }
+            return new ResponseEntity<>(new AppResponse().badRequest("Please check Header Token!"), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/update-pig-special")
+    public ResponseEntity<?> updatePigSpecial(@RequestHeader HttpHeaders httpHeaders, @RequestBody PigSpecial pigSpecial) {
+        try {
+            List<String> tokenList = httpHeaders.get("access_token");
+            if (tokenList != null && tokenList.size() > 0) {
+                String token = tokenList.get(0);
+                if (token != null && !token.equals("") && token.length() > 0) {
+                    boolean isTokenValid = jwtService.checkToken(token);
+                    if (isTokenValid) {
+                        return pigService.updatePigSpecial(pigSpecial);
+                    } else {
+                        return new ResponseEntity<>(new AppResponse().badRequest("Token Invalid Or Expired!"), HttpStatus.UNAUTHORIZED);
                     }
                 }
             }
