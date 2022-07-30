@@ -19,7 +19,6 @@ import java.util.List;
 public class BlogRepository extends BaseRepository {
     private final Logger log = LoggerFactory.getLogger(BlogRepository.class);
 
-
     public List<Blog> getAllBlog() {
         List<Blog> listBlog = new ArrayList<>();
         try {
@@ -60,6 +59,7 @@ public class BlogRepository extends BaseRepository {
                 blog.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 listBlog.add(blog);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -115,6 +115,7 @@ public class BlogRepository extends BaseRepository {
 
                 listBlogByFilter.add(blog);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -133,6 +134,7 @@ public class BlogRepository extends BaseRepository {
             while (resultSet.next()) {
                 numberOfBlog = resultSet.getInt("total");
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -181,6 +183,7 @@ public class BlogRepository extends BaseRepository {
                 blog.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 blog.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -212,6 +215,7 @@ public class BlogRepository extends BaseRepository {
             statement.setString(9, blog.getNguoi_cap_nhat());
             statement.setTimestamp(10, new Timestamp(dateCurrent.getTime()));
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("ADD NEW BLOG: " + blog.getMa_blog());
@@ -251,6 +255,7 @@ public class BlogRepository extends BaseRepository {
             statement.setInt(9, blog.getId());
 
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("UPDATE BLOG: " + blog.getMa_blog());
@@ -267,6 +272,7 @@ public class BlogRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, blog.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("DELETE BLOG: " + blog.getMa_blog());

@@ -72,6 +72,17 @@ public class PigController extends BaseController {
         }
     }
 
+    @GetMapping("/get-pig-not-special")
+    public ResponseEntity<?> getAllPigNotSpecial() {
+        try {
+            return pigService.getAllPigNotSpecial();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new AppResponse().badRequest("Something's Wrong!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @GetMapping("/get-pig-limit-12")
     public ResponseEntity<?> getPigLimit12() {
         try {

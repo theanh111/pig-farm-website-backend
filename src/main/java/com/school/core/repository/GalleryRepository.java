@@ -49,6 +49,7 @@ public class GalleryRepository extends BaseRepository {
                 gallery.setTrang_thai(resultSet.getInt("trang_thai"));
                 listGallery.add(gallery);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -73,6 +74,7 @@ public class GalleryRepository extends BaseRepository {
             statement.setString(6, gallery.getNguoi_cap_nhat());
             statement.setTimestamp(7, new Timestamp(dateCurrent.getTime()));
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("SAVE GALLERY: " + gallery.getTen_anh());
@@ -101,6 +103,7 @@ public class GalleryRepository extends BaseRepository {
             statement.setTimestamp(5, new Timestamp(dateCurrent.getTime()));
             statement.setInt(6, gallery.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("UPDATE GALLERY: " + gallery.getTen_anh());
@@ -117,6 +120,7 @@ public class GalleryRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, gallery.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("DELETE GALLERY: " + gallery.getTen_anh());

@@ -47,6 +47,7 @@ public class FarmRepository extends BaseRepository {
                 farm.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 listFarm.add(farm);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -91,6 +92,7 @@ public class FarmRepository extends BaseRepository {
 
                 listFarmByFilter.add(farm);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -109,6 +111,7 @@ public class FarmRepository extends BaseRepository {
             while (resultSet.next()) {
                 numberOfFarm = resultSet.getInt("total");
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -145,6 +148,7 @@ public class FarmRepository extends BaseRepository {
                 farm.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 farm.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -181,6 +185,7 @@ public class FarmRepository extends BaseRepository {
                 farm.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
                 farm.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -204,6 +209,7 @@ public class FarmRepository extends BaseRepository {
             while (resultSet.next()) {
                 farmNameDB = resultSet.getString("ten_trang_trai");
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -228,6 +234,7 @@ public class FarmRepository extends BaseRepository {
             statement.setTimestamp(6, new Timestamp(dateCurrent.getTime()));
             statement.setString(7, farm.getNguoi_cap_nhat());
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("SAVE FARM: " + farm.getMa_trang_trai());
@@ -256,6 +263,7 @@ public class FarmRepository extends BaseRepository {
             statement.setTimestamp(5, new Timestamp(dateCurrent.getTime()));
             statement.setInt(6, farm.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("UPDATE FARM: " + farm.getMa_trang_trai());
@@ -272,6 +280,7 @@ public class FarmRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, farm.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("DELETE FARM: " + farm.getMa_trang_trai());

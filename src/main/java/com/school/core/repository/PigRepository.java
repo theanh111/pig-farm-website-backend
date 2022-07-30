@@ -45,6 +45,7 @@ public class PigRepository extends BaseRepository {
                 pig.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
                 listPigLimit12.add(pig);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -62,10 +63,12 @@ public class PigRepository extends BaseRepository {
                     "ma_so_ca_the, " +
                     "hinh_anh_1, " +
                     "ca_the_tieu_bieu, " +
-                    "vi_tri_tieu_bieu " +
+                    "vi_tri_tieu_bieu, " +
+                    "tuoi " +
                     "FROM tblpig " +
                     "WHERE trang_thai = 1 " +
-                    "AND ca_the_tieu_bieu = 1 " ;
+                    "AND ca_the_tieu_bieu = 1 " +
+                    "ORDER BY vi_tri_tieu_bieu ASC" ;
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -75,8 +78,10 @@ public class PigRepository extends BaseRepository {
                 pigSpecial.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
                 pigSpecial.setCa_the_tieu_bieu(resultSet.getInt("ca_the_tieu_bieu"));
                 pigSpecial.setVi_tri_tieu_bieu(resultSet.getInt("vi_tri_tieu_bieu"));
+                pigSpecial.setTuoi(resultSet.getString("tuoi"));
                 listPigSpecial.add(pigSpecial);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -95,6 +100,7 @@ public class PigRepository extends BaseRepository {
             while (resultSet.next()) {
                 numberOfPig = resultSet.getInt("total");
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -215,6 +221,7 @@ public class PigRepository extends BaseRepository {
                 pig.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
                 pig.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -336,6 +343,7 @@ public class PigRepository extends BaseRepository {
                 pig.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 listPigByFarmName.add(pig);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -455,11 +463,132 @@ public class PigRepository extends BaseRepository {
                 pig.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 listPig.add(pig);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - getAllPig!");
+        }
+        return listPig;
+    }
+
+    public List<Pig> getAllPigNotSpecial() {
+        List<Pig> listPig = new ArrayList<>();
+        try {
+            String sqlQuery = "SELECT " +
+                    "id," +
+                    "ma_so_ca_the, " +
+                    "tuoi, " +
+                    "nguoi_danh_gia, " +
+                    "dia_diem_danh_gia, " +
+                    "ngay_danh_gia, " +
+                    "gioi_tinh, " +
+                    "nhan_trung_trang, " +
+                    "tai_meo, " +
+                    "mom, " +
+                    "vanh_trang_quanh_mom, " +
+                    "mat, " +
+                    "da_co_khoang_den, " +
+                    "khoang_den_phu, " +
+                    "kieu_lung_bung, " +
+                    "chan, " +
+                    "da_mat, " +
+                    "kieu_duoi, " +
+                    "kieu_tai, " +
+                    "huong_tai, " +
+                    "kieu_long, " +
+                    "loai_mau_long, " +
+                    "hinh_dang_dau, " +
+                    "trong_luong_co_the_kg, " +
+                    "chieu_dai_dau_cm, " +
+                    "chieu_dai_duoi_cm, " +
+                    "chieu_rong_nguc_cm, " +
+                    "chieu_cao_than_tai_chan_truoc_cm, " +
+                    "chieu_dai_co_the_cm, " +
+                    "chieu_dai_tai_cm, " +
+                    "chieu_rong_than_tai_xuong_chau_cm, " +
+                    "chu_vi_co_chan_cm, " +
+                    "do_rong_dai_trang_vat_vai_cm, " +
+                    "so_bau_vu, " +
+                    "loai_con_giong, " +
+                    "so_con_trong_dan, " +
+                    "so_con_duc_trong_dan, " +
+                    "so_con_cai_trong_dan, " +
+                    "hinh_anh_1, " +
+                    "hinh_anh_2, " +
+                    "hinh_dang_long, " +
+                    "do_dai_long, " +
+                    "do_day_long, " +
+                    "pha_he, " +
+                    "ngay_nhap, " +
+                    "trang_thai, " +
+                    "nguoi_nhap, " +
+                    "nguoi_cap_nhat, " +
+                    "ngay_cap_nhat " +
+                    "FROM tblpig " +
+                    "WHERE ca_the_tieu_bieu = 0 OR ca_the_tieu_bieu IS NULL";
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Pig pig = new Pig();
+                pig.setId(resultSet.getInt("id"));
+                pig.setMa_so_ca_the(resultSet.getString("ma_so_ca_the"));
+                pig.setTuoi(resultSet.getString("tuoi"));
+                pig.setNguoi_danh_gia(resultSet.getString("nguoi_danh_gia"));
+                pig.setDia_diem_danh_gia(resultSet.getString("dia_diem_danh_gia"));
+                pig.setNgay_danh_gia(resultSet.getString("ngay_danh_gia"));
+                pig.setGioi_tinh(resultSet.getString("gioi_tinh"));
+                pig.setNhan_trung_trang(resultSet.getString("nhan_trung_trang"));
+                pig.setTai_meo(resultSet.getString("tai_meo"));
+                pig.setMom(resultSet.getString("mom"));
+                pig.setVanh_trang_quanh_mom(resultSet.getString("vanh_trang_quanh_mom"));
+                pig.setMat(resultSet.getString("mat"));
+                pig.setDa_co_khoang_den(resultSet.getString("da_co_khoang_den"));
+                pig.setKhoang_den_phu(resultSet.getString("khoang_den_phu"));
+                pig.setKieu_lung_bung(resultSet.getString("kieu_lung_bung"));
+                pig.setChan(resultSet.getString("chan"));
+                pig.setDa_mat(resultSet.getString("da_mat"));
+                pig.setKieu_duoi(resultSet.getString("kieu_duoi"));
+                pig.setKieu_tai(resultSet.getString("kieu_tai"));
+                pig.setHuong_tai(resultSet.getString("huong_tai"));
+                pig.setKieu_long(resultSet.getString("kieu_long"));
+                pig.setLoai_mau_long(resultSet.getString("loai_mau_long"));
+                pig.setHinh_dang_dau(resultSet.getString("hinh_dang_dau"));
+                pig.setTrong_luong_co_the_kg(String.valueOf(resultSet.getDouble("trong_luong_co_the_kg")));
+                pig.setChieu_dai_dau_cm(String.valueOf(resultSet.getDouble("chieu_dai_dau_cm")));
+                pig.setChieu_dai_duoi_cm(String.valueOf(resultSet.getDouble("chieu_dai_duoi_cm")));
+                pig.setChieu_rong_nguc_cm(String.valueOf(resultSet.getDouble("chieu_rong_nguc_cm")));
+                pig.setChieu_cao_than_tai_chan_truoc_cm(String.valueOf(resultSet.getDouble("chieu_cao_than_tai_chan_truoc_cm")));
+                pig.setChieu_dai_co_the_cm(String.valueOf(resultSet.getDouble("chieu_dai_co_the_cm")));
+                pig.setChieu_dai_tai_cm(String.valueOf(resultSet.getDouble("chieu_dai_tai_cm")));
+                pig.setChieu_rong_than_tai_xuong_chau_cm(String.valueOf(resultSet.getDouble("chieu_rong_than_tai_xuong_chau_cm")));
+                pig.setChu_vi_co_chan_cm(String.valueOf(resultSet.getDouble("chu_vi_co_chan_cm")));
+                pig.setDo_rong_dai_trang_vat_vai_cm(String.valueOf(resultSet.getDouble("do_rong_dai_trang_vat_vai_cm")));
+                pig.setSo_bau_vu(String.valueOf(resultSet.getInt("so_bau_vu")));
+                pig.setLoai_con_giong(resultSet.getString("loai_con_giong"));
+                pig.setSo_con_trong_dan(String.valueOf(resultSet.getInt("so_con_trong_dan")));
+                pig.setSo_con_duc_trong_dan(String.valueOf(resultSet.getInt("so_con_duc_trong_dan")));
+                pig.setSo_con_cai_trong_dan(String.valueOf(resultSet.getInt("so_con_cai_trong_dan")));
+                pig.setHinh_anh_1(resultSet.getString("hinh_anh_1"));
+                pig.setHinh_anh_2(resultSet.getString("hinh_anh_2"));
+                pig.setHinh_dang_long(resultSet.getString("hinh_dang_long"));
+                pig.setDo_dai_long(resultSet.getString("do_dai_long"));
+                pig.setDo_day_long(resultSet.getString("do_day_long"));
+                pig.setPha_he(resultSet.getString("pha_he"));
+                pig.setNgay_nhap(resultSet.getString("ngay_nhap"));
+                pig.setTrang_thai(resultSet.getInt("trang_thai"));
+                pig.setNguoi_nhap(resultSet.getString("nguoi_nhap"));
+                pig.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
+                pig.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
+                listPig.add(pig);
+            }
+            log.info("SQL: " + sqlQuery);
+            connection.commit();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error - getAllPigNotSpecial!");
         }
         return listPig;
     }
@@ -589,6 +718,7 @@ public class PigRepository extends BaseRepository {
                 pig.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 listPig.add(pig);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -612,6 +742,7 @@ public class PigRepository extends BaseRepository {
             while (resultSet.next()) {
                 pigCodeDB = resultSet.getString("name");
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -635,6 +766,7 @@ public class PigRepository extends BaseRepository {
             while (resultSet.next()) {
                 pigCodeDB = resultSet.getString("ma_so_ca_the");
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -913,6 +1045,7 @@ public class PigRepository extends BaseRepository {
             statement.setTimestamp(44, new Timestamp(dateCurrent.getTime()));
             statement.setInt(45, pig.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("UPDATE PIG: " + pig.getMa_so_ca_the());
@@ -932,6 +1065,7 @@ public class PigRepository extends BaseRepository {
             statement.setInt(1, pig.getTrang_thai());
             statement.setInt(2, pig.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("UPDATE PIG STATUS: " + pig.getMa_so_ca_the() + " - status: " + pig.getTrang_thai());
@@ -950,6 +1084,7 @@ public class PigRepository extends BaseRepository {
                     "WHERE id = ? ";
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, pigId);
+            log.info("SQL: " + sqlQuery);
             statement.executeUpdate();
             connection.commit();
             statement.close();
@@ -970,6 +1105,7 @@ public class PigRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, pigSpecial.getVi_tri_cap_nhat());
             statement.setInt(2, pigSpecial.getId_new());
+            log.info("SQL: " + sqlQuery);
             statement.executeUpdate();
             connection.commit();
             statement.close();
@@ -1219,6 +1355,7 @@ public class PigRepository extends BaseRepository {
             statement.setString(46, pig.getNguoi_cap_nhat());
             statement.setTimestamp(47, new Timestamp(dateCurrent.getTime()));
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("SAVE PIG: " + pig.getMa_so_ca_the());
@@ -1235,6 +1372,7 @@ public class PigRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, pig.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("DELETE PIG: " + pig.getMa_so_ca_the());

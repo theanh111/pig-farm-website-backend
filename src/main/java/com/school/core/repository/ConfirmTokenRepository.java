@@ -2,6 +2,8 @@ package com.school.core.repository;
 
 import com.school.core.entity.ConfirmToken;
 import com.school.core.response.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 
 @Repository
 public class ConfirmTokenRepository extends BaseRepository {
+    private final Logger log = LoggerFactory.getLogger(BlogRepository.class);
+
     public ConfirmToken findTokenByToken(String token) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         ConfirmToken confirmToken = new ConfirmToken();
@@ -40,6 +44,7 @@ public class ConfirmTokenRepository extends BaseRepository {
                     confirmToken.setConfirmed_at(confirmedAt);
                 }
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -60,6 +65,7 @@ public class ConfirmTokenRepository extends BaseRepository {
             statement.setString(3, confirmToken.getCreated_at());
             statement.setString(4, confirmToken.getExpires_at());
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -70,13 +76,14 @@ public class ConfirmTokenRepository extends BaseRepository {
 
     public void updateConfirmedAt(String token, String confirmAt) {
         try {
-            String sql = "UPDATE tblconfirmtoken SET confirmed_at = ? " +
+            String sqlQuery = "UPDATE tblconfirmtoken SET confirmed_at = ? " +
                     "WHERE token = ?";
-            PreparedStatement statement = this.connection.prepareStatement(sql);
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
             statement.setString(1, confirmAt);
             statement.setString(2, token);
             statement.executeUpdate();
-            this.connection.commit();
+            log.info("SQL: " + sqlQuery);
+            connection.commit();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();

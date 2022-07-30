@@ -148,6 +148,27 @@ public class PigService {
         }
     }
 
+    public ResponseEntity<?> getAllPigNotSpecial() {
+        try {
+            List<Pig> listPigNotSpecial = pigRepository.getAllPigNotSpecial();
+            if (listPigNotSpecial.size() > 0) {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(200);
+                responseData.setMessage("Get All Pig Not Special");
+                responseData.setData(listPigNotSpecial);
+                return new ResponseEntity<>(responseData, HttpStatus.OK);
+            } else {
+                ResponseData responseData = new ResponseData();
+                responseData.setCode(400);
+                responseData.setMessage("Can't Get All Pig Not Special");
+                return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(HttpStatus.BAD_REQUEST, "Something's Wrong!");
+        }
+    }
+
     public ResponseEntity<?> countPig() {
         try {
             Integer totalPig = pigRepository.countPig();
@@ -196,7 +217,7 @@ public class PigService {
                 Pig pig = listData.get(i);
                 String pigCodeCheck = pigRepository.getPigCode(pig.getMa_so_ca_the());
                 if (pigCodeCheck != null) {
-                   listFailed.add(pigCodeCheck);
+                    listFailed.add(pigCodeCheck);
                 } else {
                     pigRepository.savePig(pig);
                     listSuccess.add(pig.getMa_so_ca_the());
@@ -234,12 +255,18 @@ public class PigService {
 
     public ResponseEntity<?> updatePigSpecial(PigSpecial pigSpecial) {
         try {
-            pigRepository.updatePigSpecial(pigSpecial);
+            if (pigSpecial.getId_old() != null) {
+                pigRepository.updatePigSpecialNull(pigSpecial.getId_old());
+                pigRepository.updatePigSpecial(pigSpecial);
+            } else {
+                pigRepository.updatePigSpecial(pigSpecial);
+            }
             return new ResponseEntity<>(new AppResponse().success("Cập nhật cá thể tiêu biểu thành công!"), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new AppResponse().badRequest("Error update pig special!"), HttpStatus.BAD_REQUEST);
         }
+
     }
 
     public ResponseEntity<?> deletePig(Pig pig) {

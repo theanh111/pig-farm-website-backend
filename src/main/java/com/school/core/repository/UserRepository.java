@@ -3,6 +3,8 @@ package com.school.core.repository;
 import com.school.core.entity.User;
 import com.school.core.entity.UserPrinciple;
 import com.school.core.response.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Repository
 public class UserRepository extends BaseRepository {
+    private final Logger log = LoggerFactory.getLogger(PigRepository.class);
+
     public void saveUser(User user) {
         try {
             Date dateCurrent = new Date();
@@ -41,6 +45,7 @@ public class UserRepository extends BaseRepository {
             statement.setString(11, user.getGender());
             statement.setTimestamp(12, new Timestamp(dateCurrent.getTime()));
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -62,6 +67,7 @@ public class UserRepository extends BaseRepository {
             while (resultSet.next()) {
                 email = resultSet.getString("user_email");
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -83,6 +89,7 @@ public class UserRepository extends BaseRepository {
             while (resultSet.next()) {
                 email = resultSet.getString("user_email");
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,7 +97,6 @@ public class UserRepository extends BaseRepository {
         }
         return email;
     }
-
 
     public String findUserPasswordByUsername(String username) {
         String passwordHash = null;
@@ -105,6 +111,7 @@ public class UserRepository extends BaseRepository {
             while (resultSet.next()) {
                 passwordHash = resultSet.getString("user_password");
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,6 +133,7 @@ public class UserRepository extends BaseRepository {
             while (resultSet.next()) {
                 usernameDB = resultSet.getString("user_name");
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -165,6 +173,7 @@ public class UserRepository extends BaseRepository {
                 user.setStatus(resultSet.getString("user_status"));
                 user.setGender(resultSet.getString("user_gender"));
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -174,7 +183,7 @@ public class UserRepository extends BaseRepository {
     }
 
     public Optional<UserPrinciple> findOneWithAuthoritiesByUsername(String username) {
-        String sql = "SELECT " +
+        String sqlQuery = "SELECT " +
                 "id, " +
                 "user_password, " +
                 "user_name, " +
@@ -184,7 +193,7 @@ public class UserRepository extends BaseRepository {
                 "WHERE user_name = ?";
         UserPrinciple userPrinciple = null;
         try {
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -199,6 +208,7 @@ public class UserRepository extends BaseRepository {
                 userPrinciple.setStatus(resultSet.getString("user_status"));
                 userPrinciple.setRoleId(resultSet.getInt("role_id"));
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -223,6 +233,7 @@ public class UserRepository extends BaseRepository {
             if (email != null && email.length() > 0) {
                 return true;
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -249,6 +260,7 @@ public class UserRepository extends BaseRepository {
             if (confirmed_at != null && confirmed_at.length() > 0) {
                 return true;
             }
+            log.info("SQL: " + sqlQuery);
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -259,11 +271,12 @@ public class UserRepository extends BaseRepository {
 
     public void enableUser(String email) {
         try {
-            String sql = "UPDATE tblusers SET user_status = 'A' " +
+            String sqlQuery = "UPDATE tblusers SET user_status = 'A' " +
                     "WHERE user_email = ?";
-            PreparedStatement statement = this.connection.prepareStatement(sql);
+            PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
             statement.setString(1, email);
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             this.connection.commit();
             statement.close();
         } catch (SQLException e) {

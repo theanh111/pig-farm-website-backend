@@ -59,6 +59,7 @@ public class NewsRepository extends BaseRepository {
                 news.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 listBlog.add(news);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -114,6 +115,7 @@ public class NewsRepository extends BaseRepository {
 
                 listNewsByFilter.add(news);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -132,6 +134,7 @@ public class NewsRepository extends BaseRepository {
             while (resultSet.next()) {
                 numberOfNews = resultSet.getInt("total");
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -180,6 +183,7 @@ public class NewsRepository extends BaseRepository {
                 news.setNguoi_cap_nhat(resultSet.getString("nguoi_cap_nhat"));
                 news.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -211,6 +215,7 @@ public class NewsRepository extends BaseRepository {
             statement.setString(9, news.getNguoi_cap_nhat());
             statement.setTimestamp(10, new Timestamp(dateCurrent.getTime()));
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("SAVE NEWS: " + news.getMa_tin_tuc());
@@ -250,6 +255,7 @@ public class NewsRepository extends BaseRepository {
             statement.setInt(9, news.getId());
 
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("UPDATE NEWS: " + news.getMa_tin_tuc());
@@ -266,6 +272,7 @@ public class NewsRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, news.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("DELETE NEWS: " + news.getMa_tin_tuc());

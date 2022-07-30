@@ -50,6 +50,7 @@ public class ContactRepository extends BaseRepository {
                 contact.setNgay_cap_nhat(resultSet.getString("ngay_cap_nhat"));
                 listContact.add(contact);
             }
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
         } catch (SQLException e) {
@@ -75,6 +76,7 @@ public class ContactRepository extends BaseRepository {
             statement.setString(7, contact.getNguoi_cap_nhat());
             statement.setTimestamp(8, new Timestamp(dateCurrent.getTime()));
             statement.execute();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info(("SAVE CONTACT: " + contact.getTen_lien_he()));
@@ -105,6 +107,7 @@ public class ContactRepository extends BaseRepository {
             statement.setTimestamp(6, new Timestamp(dateCurrent.getTime()));
             statement.setInt(7, contact.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("UPDATE CONTACT: " + contact.getTen_lien_he());
@@ -121,6 +124,7 @@ public class ContactRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setInt(1, contact.getId());
             statement.executeUpdate();
+            log.info("SQL: " + sqlQuery);
             connection.commit();
             statement.close();
             log.info("DELETE CONTACT: " + contact.getTen_lien_he());
