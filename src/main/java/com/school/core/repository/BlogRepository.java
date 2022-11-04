@@ -197,8 +197,12 @@ public class BlogRepository extends BaseRepository {
         try {
             String fixedHTMLCode = null;
             String fixedHTMLCode2 = null;
+            String fixedHTMLCode3 = null;
+            String fixedHTMLCode4 = null;
             fixedHTMLCode = blog.getNoi_dung().replaceAll("<", "&lt;");
             fixedHTMLCode2 = fixedHTMLCode.replaceAll(">", "&gt;");
+            fixedHTMLCode3 = fixedHTMLCode2.replaceAll("alt=\"undefined\"", "alt=\"hinh-anh-thong-tin-du-an\"");
+            fixedHTMLCode4 = fixedHTMLCode3.replaceAll("img", "img class=\"responsive-screen-size\"");
             Date dateCurrent = new Date();
             String sqlQuery = "INSERT INTO tblblog " +
                     "(ma_blog, ten_blog, hinh_anh, hinh_anh_1, hinh_anh_2, noi_dung, nguoi_nhap, ngay_nhap, nguoi_cap_nhat, ngay_cap_nhat) " +
@@ -209,7 +213,7 @@ public class BlogRepository extends BaseRepository {
             statement.setString(3, blog.getHinh_anh());
             statement.setString(4, blog.getHinh_anh_1());
             statement.setString(5, blog.getHinh_anh_2());
-            statement.setString(6, fixedHTMLCode2);
+            statement.setString(6, fixedHTMLCode4);
             statement.setString(7, blog.getNguoi_nhap());
             statement.setTimestamp(8, new Timestamp(dateCurrent.getTime()));
             statement.setString(9, blog.getNguoi_cap_nhat());
@@ -230,8 +234,12 @@ public class BlogRepository extends BaseRepository {
             Date dateCurrent = new Date();
             String fixedHTMLCode = null;
             String fixedHTMLCode2 = null;
+            String fixedHTMLCode3 = null;
+            String fixedHTMLCode4 = null;
             fixedHTMLCode = blog.getNoi_dung().replaceAll("<", "&lt;");
             fixedHTMLCode2 = fixedHTMLCode.replaceAll(">", "&gt;");
+            fixedHTMLCode3 = fixedHTMLCode2.replaceAll("alt=\"undefined\"", "alt=\"hinh-anh-thong-tin-du-an\"");
+            fixedHTMLCode4 = fixedHTMLCode3.replaceAll("img", "img class=\"responsive-screen-size\"");
             String sqlQuery = "UPDATE tblblog " +
                     "SET " +
                     "ma_blog = ?, " +
@@ -246,7 +254,7 @@ public class BlogRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, blog.getMa_blog());
             statement.setString(2, blog.getTen_blog());
-            statement.setString(3, fixedHTMLCode2);
+            statement.setString(3, fixedHTMLCode4);
             statement.setString(4, blog.getHinh_anh());
             statement.setString(5, blog.getHinh_anh_1());
             statement.setString(6, blog.getHinh_anh_2());

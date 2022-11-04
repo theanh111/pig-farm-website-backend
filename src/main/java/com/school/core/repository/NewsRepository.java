@@ -197,8 +197,12 @@ public class NewsRepository extends BaseRepository {
         try {
             String fixedHTMLCode = null;
             String fixedHTMLCode2 = null;
+            String fixedHTMLCode3 = null;
+            String fixedHTMLCode4 = null;
             fixedHTMLCode = news.getNoi_dung().replaceAll("<", "&lt;");
             fixedHTMLCode2 = fixedHTMLCode.replaceAll(">", "&gt;");
+            fixedHTMLCode3 = fixedHTMLCode2.replaceAll("alt=\"undefined\"", "alt=\"hinh-anh-tin-tuc\"");
+            fixedHTMLCode4 = fixedHTMLCode3.replaceAll("img", "img class=\"responsive-screen-size\"");
             Date dateCurrent = new Date();
             String sqlQuery = "INSERT INTO tblnews " +
                     "(ma_tin_tuc, ten_tin_tuc, hinh_anh, hinh_anh_1, hinh_anh_2, noi_dung, nguoi_nhap, ngay_nhap, nguoi_cap_nhat, ngay_cap_nhat) " +
@@ -209,7 +213,7 @@ public class NewsRepository extends BaseRepository {
             statement.setString(3, news.getHinh_anh());
             statement.setString(4, news.getHinh_anh_1());
             statement.setString(5, news.getHinh_anh_2());
-            statement.setString(6, fixedHTMLCode2);
+            statement.setString(6, fixedHTMLCode4);
             statement.setString(7, news.getNguoi_nhap());
             statement.setTimestamp(8, new Timestamp(dateCurrent.getTime()));
             statement.setString(9, news.getNguoi_cap_nhat());
@@ -230,8 +234,12 @@ public class NewsRepository extends BaseRepository {
             Date dateCurrent = new Date();
             String fixedHTMLCode = null;
             String fixedHTMLCode2 = null;
+            String fixedHTMLCode3 = null;
+            String fixedHTMLCode4 = null;
             fixedHTMLCode = news.getNoi_dung().replaceAll("<", "&lt;");
             fixedHTMLCode2 = fixedHTMLCode.replaceAll(">", "&gt;");
+            fixedHTMLCode3 = fixedHTMLCode2.replaceAll("alt=\"undefined\"", "alt=\"hinh-anh-tin-tuc\"");
+            fixedHTMLCode4 = fixedHTMLCode3.replaceAll("img", "img class=\"responsive-screen-size\"");
             String sqlQuery = "UPDATE tblnews " +
                     "SET " +
                     "ma_tin_tuc = ?, " +
@@ -246,7 +254,7 @@ public class NewsRepository extends BaseRepository {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             statement.setString(1, news.getMa_tin_tuc());
             statement.setString(2, news.getTen_tin_tuc());
-            statement.setString(3, fixedHTMLCode2);
+            statement.setString(3, fixedHTMLCode4);
             statement.setString(4, news.getHinh_anh());
             statement.setString(5, news.getHinh_anh_1());
             statement.setString(6, news.getHinh_anh_2());
